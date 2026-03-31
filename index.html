@@ -7,6 +7,127 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  /* ── PASSWORD GATE ── */
+  #password-gate {
+    position: fixed;
+    inset: 0;
+    background: var(--green-deep);
+    background-image:
+      radial-gradient(ellipse at 30% 60%, rgba(74,140,92,0.2) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 20%, rgba(201,168,76,0.1) 0%, transparent 50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 2rem;
+  }
+
+  #password-gate .gate-logo {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 900;
+    color: white;
+    text-align: center;
+    line-height: 1.1;
+    margin-bottom: 0.4rem;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  #password-gate .gate-logo span { color: var(--gold); font-style: italic; }
+
+  #password-gate .gate-sub {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: rgba(255,255,255,0.5);
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+
+  #password-gate .gate-box {
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(201,168,76,0.3);
+    border-radius: 10px;
+    padding: 2.5rem 2.5rem 2rem;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    animation: fadeUp 0.8s 0.5s ease both;
+    backdrop-filter: blur(10px);
+  }
+
+  #password-gate .gate-box p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 1.2rem;
+  }
+
+  #password-gate input[type="password"] {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    color: white;
+    font-family: 'EB Garamond', serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.3em;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1rem;
+  }
+
+  #password-gate input[type="password"]::placeholder {
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.25);
+    font-size: 0.9rem;
+  }
+
+  #password-gate input[type="password"]:focus {
+    border-color: var(--gold);
+  }
+
+  #password-gate .gate-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--gold);
+    color: var(--dark);
+    border: none;
+    border-radius: 6px;
+    font-family: 'EB Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  #password-gate .gate-btn:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+  }
+
+  #password-gate .gate-error {
+    color: #e74c3c;
+    font-size: 0.88rem;
+    margin-top: 0.8rem;
+    min-height: 1.2rem;
+    font-style: italic;
+  }
+
+  #password-gate .gate-hint {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.3);
+    font-style: italic;
+    font-family: 'EB Garamond', serif;
+  }
+
   :root {
     --green-deep: #1a3a2a;
     --green-mid: #2d5a3d;
@@ -969,6 +1090,19 @@
 </head>
 <body>
 
+<!-- PASSWORD GATE -->
+<div id="password-gate">
+  <div class="gate-logo">Masters Pool<br>of <span>Pools</span></div>
+  <div class="gate-sub">The World Famous Live Leaderboard</div>
+  <div class="gate-box">
+    <p>🔒 Private Access — Invitees Only</p>
+    <input type="password" id="gate-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkGatePassword()">
+    <button class="gate-btn" onclick="checkGatePassword()">Enter the Pool →</button>
+    <div class="gate-error" id="gate-error"></div>
+    <div class="gate-hint">Password was included in your invitation email.</div>
+  </div>
+</div>
+
 <header>
   <nav>
     <a class="nav-logo" href="#" onclick="showSection('home')">⛳ Masters Pool of Pools</a>
@@ -988,7 +1122,7 @@
     <span>💰 Entry Fee: $20/team · No limit on entries</span>
     <span>⛳ Salary Cap: 50 per team</span>
     <span>🕐 Deadline: Thursday morning tee-off</span>
-    <span>📧 E-transfer: masterspoolofpools@gmail.com</span>
+    <span>📧 E-transfer: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3558544641504746455a5a595a53455a5a5946755258545c591b565a58">[email&#160;protected]</a></span>
     <span>🏌️ Win = 8pts · Top 3 = 5pts · Top 10 = 3pts · Top 25 = 2pts · Made Cut = 1pt · Missed Cut = -1pt</span>
     <span>🏆 2026 Masters — Augusta National</span>
     <span>💰 Entry Fee: $20/team · No limit on entries</span>
@@ -1141,7 +1275,7 @@
     <div class="payment-box">
       <h4>💳 Payment — $20 per team</h4>
       <p>
-        Please e-transfer your entry fee to Treasury Secretary Daniel at <span class="etransfer-tag">masterspoolofpools@gmail.com</span> as soon as you submit your team(s). Entry is not confirmed until payment is received. Ideally send one e-transfer for all your teams.
+        Please e-transfer your entry fee to Treasury Secretary Daniel at <span class="etransfer-tag"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f994988a8d9c8b8a89969695969f899696958ab99e94989095d79a9694">[email&#160;protected]</a></span> as soon as you submit your team(s). Entry is not confirmed until payment is received. Ideally send one e-transfer for all your teams.
       </p>
     </div>
 
@@ -1157,7 +1291,7 @@
     <h3>You're In!</h3>
     <p>
       Your team has been submitted. Now please send your <strong>$20 entry fee</strong> via e-transfer to<br>
-      <span class="etransfer-tag" style="display:inline-block; margin:0.8rem 0; font-size:1rem;">masterspoolofpools@gmail.com</span><br>
+      <span class="etransfer-tag" style="display:inline-block; margin:0.8rem 0; font-size:1rem;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="375a5644435245444758585b58514758585b4477505a565e5b1954585a">[email&#160;protected]</a></span><br>
       See you on the leaderboard. Good luck!
     </p>
     <button class="btn btn-primary" onclick="resetAfterSubmit()" style="margin-top:1.5rem;">Submit Another Team</button>
@@ -1176,7 +1310,7 @@
         <li>Entry is <strong>$20 per team</strong></li>
         <li>Submit as many teams as you like</li>
         <li>All teams must be submitted before <strong>Thursday tee-off</strong></li>
-        <li>E-transfer payment to <strong>masterspoolofpools@gmail.com</strong></li>
+        <li>E-transfer payment to <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c5a8a4b6b1a0b7b6b5aaaaa9aaa3b5aaaaa9b685a2a8a4aca9eba6aaa8">[email&#160;protected]</a></strong></li>
         <li>More entries = more chances to win!</li>
       </ul>
     </div>
@@ -1257,7 +1391,7 @@ We are back with the website, the familiar patented format, and the World Famous
 
 To enter, please visit masterspoolofpools.com to review the "Rules & Scoring" page and make your entries on the "Enter a Team" page.
 
-Entry is still just $20 per team. E-transfers to masterspoolofpools@gmail.com.
+Entry is still just $20 per team. E-transfers to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="234e425057465150534c4c4f4c45534c4c4f5063444e424a4f0d404c4e">[email&#160;protected]</a>.
 
 See you in Augusta,
 Ben</div>
@@ -1305,12 +1439,39 @@ Ben</div>
 
 <footer>
   <p><strong>Masters Pool of Pools</strong> · Augusta National · Since 2021</p>
-  <p style="margin-top:0.5rem;">Questions? Email <strong>benssimmonds@gmail.com</strong> · E-transfers to <strong>masterspoolofpools@gmail.com</strong></p>
+  <p style="margin-top:0.5rem;">Questions? Email <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7416111a07071d19191b1a1007341319151d185a171b19">[email&#160;protected]</a></strong> · E-transfers to <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f79a9684839285848798989b98918798989b84b7909a969e9bd994989a">[email&#160;protected]</a></strong></p>
 </footer>
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── PASSWORD GATE ──
+const SITE_PASSWORD = "augusta"; // change this each year in your invite email
+
+function checkGatePassword() {
+  const val = document.getElementById('gate-input').value.trim().toLowerCase();
+  if (val === SITE_PASSWORD.toLowerCase()) {
+    const gate = document.getElementById('password-gate');
+    gate.style.transition = 'opacity 0.5s ease';
+    gate.style.opacity = '0';
+    setTimeout(() => gate.style.display = 'none', 500);
+    sessionStorage.setItem('mpop_auth', '1');
+  } else {
+    const err = document.getElementById('gate-error');
+    err.textContent = 'Incorrect password. Check your invitation email.';
+    document.getElementById('gate-input').value = '';
+    document.getElementById('gate-input').focus();
+    // shake animation
+    const box = document.querySelector('.gate-box');
+    box.style.animation = 'none';
+    box.style.transform = 'translateX(-8px)';
+    setTimeout(() => box.style.transform = 'translateX(8px)', 80);
+    setTimeout(() => box.style.transform = 'translateX(-5px)', 160);
+    setTimeout(() => box.style.transform = 'translateX(5px)', 240);
+    setTimeout(() => box.style.transform = 'translateX(0)', 320);
+  }
+}
+
 // ── GOLFER DATA (2025 salaries — update each year) ──
 const GOLFERS = [
   {name:"Scottie Scheffler", salary:19},
@@ -1716,7 +1877,7 @@ function calcPayouts(numTeams, pot) {
   remaining -= payouts[0];
   for (let i = 1; i < positions; i++) {
     const share = Math.round(remaining / (positions - i + 1));
-    payouts.push(share);
+    payouts. push(share);
     remaining -= share;
   }
   if (positions > 1) payouts[payouts.length - 1] += remaining;
@@ -1739,11 +1900,19 @@ function showToast(msg) {
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
+  // Check if already authenticated this session
+  if (sessionStorage.getItem('mpop_auth') === '1') {
+    document.getElementById('password-gate').style.display = 'none';
+  } else {
+    setTimeout(() => {
+      const inp = document.getElementById('gate-input');
+      if (inp) inp.focus();
+    }, 600);
+  }
   updateCapMeter();
-  // If there are demo submissions, show them
   if (submissions.length > 0) {
-    document.getElementById('stat-teams').textContent = submissions.length;
     const uniqueOwners = new Set(submissions.map(s => s.email)).size;
+    document.getElementById('stat-teams').textContent = submissions.length;
     document.getElementById('stat-players').textContent = uniqueOwners;
     document.getElementById('stat-pot').textContent = '$' + Math.max(0, submissions.length * 20 - 40).toLocaleString();
   }
