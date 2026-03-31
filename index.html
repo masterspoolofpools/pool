@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masters Pool of Pools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #1a3a2a;
+    --green-mid: #2d5a3d;
+    --green-light: #4a8c5c;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-pale: #f5e6b8;
+    --cream: #faf6ed;
+    --white: #ffffff;
+    --dark: #0f1f17;
+    --text: #2a1f0e;
+    --text-light: #6b5a3e;
+    --red: #c0392b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    background: var(--cream);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--green-deep);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--gold);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    height: 64px;
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    font-family: 'EB Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    padding: 0.5rem 1.1rem;
+    transition: color 0.2s, background 0.2s;
+    border-radius: 4px;
+  }
+
+  .nav-links a:hover {
+    color: var(--gold-light);
+    background: rgba(201,168,76,0.1);
+  }
+
+  .nav-links a.active { color: var(--gold); }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--green-deep);
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(74,140,92,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
+      repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(255,255,255,0.01) 80px, rgba(255,255,255,0.01) 81px),
+      repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(255,255,255,0.01) 80px, rgba(255,255,255,0.01) 81px);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .hero-flag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 0.35rem 1.2rem;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.05;
+    margin-bottom: 0.4rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s ease forwards;
+  }
+
+  .hero h1 span { color: var(--gold); font-style: italic; }
+
+  .hero-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s ease forwards;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s ease forwards;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.85rem 2.2rem;
+    font-family: 'EB Garamond', serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    border-radius: 3px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--dark);
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(201,168,76,0.3);
+  }
+
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(201,168,76,0.4);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--white);
+    border: 1.5px solid rgba(255,255,255,0.4);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  /* ── TICKER ── */
+  .ticker-bar {
+    background: var(--gold);
+    padding: 0.5rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 30s linear infinite;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--dark);
+    letter-spacing: 0.05em;
+  }
+
+  .ticker-inner span { margin: 0 3rem; }
+
+  /* ── SECTIONS ── */
+  .section {
+    display: none;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3.5rem 2rem 5rem;
+  }
+
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--green-deep);
+    margin-bottom: 0.4rem;
+    position: relative;
+    display: inline-block;
+  }
+
+  .section-title::after {
+    content: '';
+    display: block;
+    height: 3px;
+    background: var(--gold);
+    margin-top: 0.4rem;
+    width: 60%;
+  }
+
+  .section-intro {
+    font-size: 1.15rem;
+    color: var(--text-light);
+    margin-bottom: 2.5rem;
+    font-style: italic;
+    max-width: 700px;
+  }
+
+  /* ── LEADERBOARD ── */
+  .leaderboard-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.6rem 1rem;
+    border: 1.5px solid rgba(45,90,61,0.3);
+    border-radius: 4px;
+    font-family: 'EB Garamond', serif;
+    font-size: 1rem;
+    background: white;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-box:focus { border-color: var(--green-mid); }
+
+  .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    font-size: 0.97rem;
+  }
+
+  .leaderboard-table thead {
+    background: var(--green-deep);
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .leaderboard-table th {
+    padding: 1rem 0.8rem;
+    text-align: left;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .leaderboard-table th:hover { color: var(--gold-light); }
+
+  .leaderboard-table td {
+    padding: 0.75rem 0.8rem;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    vertical-align: middle;
+  }
+
+  .leaderboard-table tbody tr:last-child td { border-bottom: none; }
+
+  .leaderboard-table tbody tr:hover { background: rgba(74,140,92,0.04); }
+
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .rank-1 { background: var(--gold); color: var(--dark); }
+  .rank-2 { background: #b0b8c0; color: white; }
+  .rank-3 { background: #cd7f32; color: white; }
+  .rank-other { background: rgba(0,0,0,0.06); color: var(--text-light); }
+
+  .score-positive { color: var(--green-mid); font-weight: 600; }
+  .score-zero { color: var(--text-light); }
+  .score-negative { color: var(--red); }
+
+  .team-name-cell { font-weight: 500; }
+  .owner-cell { color: var(--text-light); font-size: 0.9rem; }
+  .golfers-cell {
+    font-size: 0.82rem;
+    color: var(--text-light);
+    max-width: 300px;
+  }
+
+  .prize-badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+  }
+
+  .prize-1st { background: rgba(201,168,76,0.15); color: #a07830; border: 1px solid rgba(201,168,76,0.4); }
+  .prize-2nd { background: rgba(176,184,192,0.15); color: #607080; border: 1px solid rgba(176,184,192,0.4); }
+  .prize-other { background: rgba(74,140,92,0.1); color: var(--green-mid); border: 1px solid rgba(74,140,92,0.3); }
+
+  .live-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #2ecc71;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  /* ── ENTRY FORM ── */
+  .form-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .form-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--green-deep);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid var(--gold-pale);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .form-row.full { grid-template-columns: 1fr; }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .form-group label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+  }
+
+  .form-group input, .form-group select {
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    font-family: 'EB Garamond', serif;
+    font-size: 1rem;
+    color: var(--text);
+    background: white;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+  }
+
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--green-mid);
+    box-shadow: 0 0 0 3px rgba(45,90,61,0.1);
+  }
+
+  /* Salary Cap Meter */
+  .cap-meter {
+    background: rgba(45,90,61,0.06);
+    border: 1.5px solid rgba(45,90,61,0.2);
+    border-radius: 6px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cap-meter-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.6rem;
+  }
+
+  .cap-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+  }
+
+  .cap-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--green-deep);
+    transition: color 0.3s;
+  }
+
+  .cap-number.over { color: var(--red); }
+
+  .cap-bar-bg {
+    height: 8px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .cap-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--green-mid);
+    transition: width 0.4s ease, background 0.3s;
+  }
+
+  .cap-bar-fill.over { background: var(--red); }
+
+  /* Golfer picker */
+  .golfer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 6px;
+    background: rgba(250,246,237,0.5);
+  }
+
+  .golfer-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.8rem;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+  }
+
+  .golfer-chip:hover { border-color: var(--green-mid); background: rgba(74,140,92,0.04); }
+
+  .golfer-chip.selected {
+    border-color: var(--green-mid);
+    background: rgba(45,90,61,0.08);
+  }
+
+  .golfer-chip.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .golfer-check {
+    width: 16px; height: 16px;
+    border: 1.5px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    transition: all 0.18s;
+  }
+
+  .golfer-chip.selected .golfer-check {
+    background: var(--green-mid);
+    border-color: var(--green-mid);
+    color: white;
+  }
+
+  .golfer-name { font-size: 0.93rem; flex: 1; }
+
+  .golfer-salary {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gold);
+    font-weight: 500;
+    background: rgba(201,168,76,0.12);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  /* Tier labels */
+  .tier-header {
+    grid-column: 1 / -1;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    padding: 0.3rem 0.2rem 0.1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    margin-top: 0.3rem;
+  }
+
+  /* Payment info */
+  .payment-box {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.04));
+    border: 1.5px solid rgba(201,168,76,0.3);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .payment-box h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--green-deep);
+    margin-bottom: 0.6rem;
+  }
+
+  .payment-box p { font-size: 1rem; color: var(--text); line-height: 1.6; }
+
+  .payment-box strong { color: var(--green-deep); }
+
+  .etransfer-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    background: var(--green-deep);
+    color: var(--gold);
+    padding: 0.2rem 0.7rem;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── RULES ── */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .rules-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.8rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border-top: 4px solid var(--gold);
+  }
+
+  .rules-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--green-deep);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .rules-card p, .rules-card li {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .rules-card ul { padding-left: 1.2rem; }
+
+  .score-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+  }
+
+  .score-table tr { border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .score-table tr:last-child { border-bottom: none; }
+  .score-table td { padding: 0.4rem 0; font-size: 0.97rem; }
+  .score-table td:last-child {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    color: var(--green-mid);
+  }
+
+  .score-table .neg { color: var(--red); }
+
+  /* Salary table */
+  .salary-section { margin-top: 2.5rem; }
+
+  .salary-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--green-deep);
+    margin-bottom: 1.2rem;
+  }
+
+  .salary-tiers { display: flex; flex-direction: column; gap: 1rem; }
+
+  .salary-tier {
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  .salary-tier-header {
+    display: flex;
+    align-items: center;
+    padding: 0.7rem 1.2rem;
+    background: var(--green-deep);
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    gap: 0.8rem;
+  }
+
+  .salary-tier-header .salary-val {
+    background: var(--gold);
+    color: var(--dark);
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+  }
+
+  .salary-names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.9rem 1.2rem;
+  }
+
+  .salary-name-tag {
+    font-size: 0.9rem;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: var(--cream);
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* ── ADMIN ── */
+  .admin-gate {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .admin-gate h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--green-deep);
+    margin-bottom: 0.8rem;
+  }
+
+  .admin-gate p { color: var(--text-light); margin-bottom: 1.5rem; font-size: 1.05rem; }
+
+  .pin-input {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .pin-input input {
+    width: 50px;
+    height: 60px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    border: 2px solid rgba(0,0,0,0.15);
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .pin-input input:focus { border-color: var(--green-mid); }
+
+  .admin-panels {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .admin-panels.visible { display: grid; }
+
+  .admin-panel {
+    background: white;
+    border-radius: 8px;
+    padding: 1.8rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  .admin-panel h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    color: var(--green-deep);
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--gold-pale);
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-box {
+    flex: 1;
+    min-width: 100px;
+    background: rgba(45,90,61,0.05);
+    border-radius: 6px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--green-deep);
+    display: block;
+  }
+
+  .stat-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-top: 0.2rem;
+  }
+
+  .email-template-box {
+    background: rgba(250,246,237,0.8);
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 6px;
+    padding: 1.2rem;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    font-family: 'EB Garamond', serif;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 0.8rem;
+  }
+
+  .payout-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .payout-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    text-align: left;
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .payout-table td {
+    padding: 0.5rem 0.6rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .payout-table td:last-child { font-family: 'DM Mono', monospace; color: var(--green-mid); }
+
+  .unpaid-badge {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    background: rgba(192,57,43,0.1);
+    color: var(--red);
+    border: 1px solid rgba(192,57,43,0.2);
+  }
+
+  .paid-badge {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    background: rgba(46,204,113,0.1);
+    color: #1e8449;
+    border: 1px solid rgba(46,204,113,0.3);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--green-deep);
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.9rem;
+    border-top: 3px solid var(--gold);
+  }
+
+  footer strong { color: var(--gold); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--green-deep);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    border-left: 4px solid var(--gold);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    font-size: 0.95rem;
+    z-index: 1000;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.35s ease;
+    max-width: 360px;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes ticker {
+    from { transform: translateX(100vw); }
+    to { transform: translateX(-100%); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .nav-links { display: none; }
+    .form-row { grid-template-columns: 1fr; }
+    .admin-panels { grid-template-columns: 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+    .golfer-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Filter pills */
+  .filter-pills {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    padding: 0.35rem 0.9rem;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    background: white;
+    color: var(--text-light);
+    transition: all 0.18s;
+  }
+
+  .pill.active, .pill:hover {
+    background: var(--green-deep);
+    color: var(--gold);
+    border-color: var(--green-deep);
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-light);
+    font-style: italic;
+    font-size: 1.1rem;
+  }
+
+  .form-success {
+    display: none;
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+
+  .form-success.show { display: block; }
+
+  .form-success h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--green-deep);
+    margin-bottom: 1rem;
+  }
+
+  .form-success p { font-size: 1.1rem; color: var(--text-light); line-height: 1.7; }
+
+  .checkmark {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a class="nav-logo" href="#" onclick="showSection('home')">⛳ Masters Pool of Pools</a>
+    <ul class="nav-links">
+      <li><a href="#" onclick="showSection('leaderboard')" id="nav-leaderboard">Leaderboard</a></li>
+      <li><a href="#" onclick="showSection('enter')" id="nav-enter">Enter a Team</a></li>
+      <li><a href="#" onclick="showSection('rules')" id="nav-rules">Rules & Scoring</a></li>
+      <li><a href="#" onclick="showSection('admin')" id="nav-admin">Admin</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-inner" id="ticker">
+    <span>🏆 2026 Masters — Augusta National</span>
+    <span>💰 Entry Fee: $20/team · No limit on entries</span>
+    <span>⛳ Salary Cap: 50 per team</span>
+    <span>🕐 Deadline: Thursday morning tee-off</span>
+    <span>📧 E-transfer: masterspoolofpools@gmail.com</span>
+    <span>🏌️ Win = 8pts · Top 3 = 5pts · Top 10 = 3pts · Top 25 = 2pts · Made Cut = 1pt · Missed Cut = -1pt</span>
+    <span>🏆 2026 Masters — Augusta National</span>
+    <span>💰 Entry Fee: $20/team · No limit on entries</span>
+    <span>⛳ Salary Cap: 50 per team</span>
+  </div>
+</div>
+
+<!-- HOME SECTION -->
+<div id="section-home" class="section active" style="max-width:1100px; margin:0 auto; padding:0;">
+
+  <div class="hero">
+    <div class="hero-flag">Augusta National · Est. 2021</div>
+    <h1>Masters Pool<br>of <span>Pools</span></h1>
+    <p class="hero-subtitle">The World Famous Live Leaderboard</p>
+    <div class="hero-cta">
+      <a href="#" class="btn btn-primary" onclick="showSection('enter')">Enter a Team — $20</a>
+      <a href="#" class="btn btn-secondary" onclick="showSection('leaderboard')">View Leaderboard</a>
+    </div>
+  </div>
+
+  <div style="max-width:1100px; margin:0 auto; padding:3rem 2rem 4rem;">
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; margin-bottom:3rem;">
+      <div style="background:white; border-radius:8px; padding:2rem; text-align:center; box-shadow:0 2px 12px rgba(0,0,0,0.06); border-top:4px solid var(--gold);">
+        <div style="font-family:'Playfair Display',serif; font-size:3rem; font-weight:900; color:var(--green-deep);" id="stat-teams">—</div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light); margin-top:0.3rem;">Teams Entered</div>
+      </div>
+      <div style="background:white; border-radius:8px; padding:2rem; text-align:center; box-shadow:0 2px 12px rgba(0,0,0,0.06); border-top:4px solid var(--gold);">
+        <div style="font-family:'Playfair Display',serif; font-size:3rem; font-weight:900; color:var(--green-deep);" id="stat-pot">—</div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light); margin-top:0.3rem;">Prize Pot</div>
+      </div>
+      <div style="background:white; border-radius:8px; padding:2rem; text-align:center; box-shadow:0 2px 12px rgba(0,0,0,0.06); border-top:4px solid var(--gold);">
+        <div style="font-family:'Playfair Display',serif; font-size:3rem; font-weight:900; color:var(--green-deep);" id="stat-players">—</div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light); margin-top:0.3rem;">Entrants</div>
+      </div>
+    </div>
+
+    <div style="background:white; border-radius:8px; padding:2.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.06); max-width:700px;">
+      <h2 style="font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--green-deep); margin-bottom:1rem;">Welcome Back, Poolies</h2>
+      <p style="font-size:1.1rem; line-height:1.8; color:var(--text); margin-bottom:1rem;">
+        It is once again that most glorious time of year. The azaleas are blooming, the pimento cheese sandwiches are being prepared, and the Masters Pool of Pools is open for business.
+      </p>
+      <p style="font-size:1.1rem; line-height:1.8; color:var(--text); margin-bottom:1rem;">
+        Pick your team using the salary cap system, submit before Thursday's tee-off, and watch the <strong>World Famous Live Leaderboard</strong> all weekend long.
+      </p>
+      <p style="font-size:1.05rem; line-height:1.8; color:var(--text-light); font-style:italic;">
+        The more entries you submit, the higher your odds of walking away in the green. Push those chips in!
+      </p>
+      <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
+        <a href="#" class="btn btn-primary" onclick="showSection('enter')">Submit Your Team</a>
+        <a href="#" class="btn btn-secondary" style="color:var(--green-deep); border-color:rgba(0,0,0,0.2);" onclick="showSection('rules')">Read the Rules</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD SECTION -->
+<div id="section-leaderboard" class="section">
+  <h2 class="section-title">Live Leaderboard</h2>
+  <p class="section-intro"><span class="live-dot"></span>Standings update in real time during the tournament.</p>
+
+  <div class="leaderboard-controls">
+    <input type="text" class="search-box" placeholder="Search team name or owner…" oninput="filterLeaderboard(this.value)" id="lb-search">
+    <div class="filter-pills">
+      <div class="pill active" onclick="filterByOwner(null, this)">All Teams</div>
+      <div class="pill" onclick="filterByOwner('in-money', this)">💰 In the Money</div>
+    </div>
+  </div>
+
+  <table class="leaderboard-table" id="lb-table">
+    <thead>
+      <tr>
+        <th onclick="sortLeaderboard('rank')">Rank ↕</th>
+        <th onclick="sortLeaderboard('team')">Team Name ↕</th>
+        <th onclick="sortLeaderboard('owner')">Owner ↕</th>
+        <th onclick="sortLeaderboard('score')">Score ↕</th>
+        <th>Golfers</th>
+        <th>Prize</th>
+      </tr>
+    </thead>
+    <tbody id="lb-body">
+    </tbody>
+  </table>
+  <div class="no-results" id="lb-empty" style="display:none;">No teams match your search.</div>
+
+  <p style="margin-top:1.5rem; color:var(--text-light); font-size:0.9rem; font-style:italic;">
+    * Scores are calculated from your golfers' tournament finish positions. Scoring: Win=8, Top 3=5, Top 10=3, Top 25=2, Made Cut=1, Missed Cut=-1.
+  </p>
+</div>
+
+<!-- ENTER SECTION -->
+<div id="section-enter" class="section">
+  <h2 class="section-title">Enter a Team</h2>
+  <p class="section-intro">Build your roster within the $50 salary cap. Pick as many golfers as you like — the more the better!</p>
+
+  <div id="form-main">
+    <div class="form-card">
+      <h3>Your Details</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="f-name" placeholder="e.g. Ben Simmonds" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="f-email" placeholder="you@example.com" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Team Name</label>
+          <input type="text" id="f-teamname" placeholder="e.g. Ben Simmonds 1" required>
+        </div>
+        <div class="form-group">
+          <label>Number of Teams You're Submitting Today</label>
+          <input type="number" id="f-numteams" min="1" max="20" value="1">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>Build Your Roster</h3>
+
+      <!-- Cap meter -->
+      <div class="cap-meter">
+        <div class="cap-meter-top">
+          <span class="cap-label">Salary Used</span>
+          <span class="cap-number" id="cap-display">0 / 50</span>
+        </div>
+        <div class="cap-bar-bg">
+          <div class="cap-bar-fill" id="cap-bar" style="width:0%"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:0.4rem;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--text-light);" id="cap-status">Select your golfers below ↓</span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--text-light);">CAP: 50</span>
+        </div>
+      </div>
+
+      <!-- Golfer grid -->
+      <div class="golfer-grid" id="golfer-grid">
+        <!-- populated by JS -->
+      </div>
+
+      <div style="margin-top:1.5rem;">
+        <p style="font-size:0.9rem; color:var(--text-light); margin-bottom:1rem; font-style:italic;">
+          Selected: <span id="selected-count">0</span> golfer(s) · Salary used: <span id="selected-salary">0</span>/50
+        </p>
+      </div>
+    </div>
+
+    <div class="payment-box">
+      <h4>💳 Payment — $20 per team</h4>
+      <p>
+        Please e-transfer your entry fee to Treasury Secretary Daniel at <span class="etransfer-tag">masterspoolofpools@gmail.com</span> as soon as you submit your team(s). Entry is not confirmed until payment is received. Ideally send one e-transfer for all your teams.
+      </p>
+    </div>
+
+    <div style="margin-top:2rem; display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="submitTeam()" id="submit-btn" style="font-size:1.1rem; padding:1rem 2.5rem;">Submit Team →</button>
+      <button class="btn btn-secondary" onclick="clearForm()" style="color:var(--text); border-color:rgba(0,0,0,0.2);">Clear & Reset</button>
+      <span id="form-error" style="color:var(--red); font-size:0.95rem; display:none;"></span>
+    </div>
+  </div>
+
+  <div class="form-success" id="form-success">
+    <span class="checkmark">🏆</span>
+    <h3>You're In!</h3>
+    <p>
+      Your team has been submitted. Now please send your <strong>$20 entry fee</strong> via e-transfer to<br>
+      <span class="etransfer-tag" style="display:inline-block; margin:0.8rem 0; font-size:1rem;">masterspoolofpools@gmail.com</span><br>
+      See you on the leaderboard. Good luck!
+    </p>
+    <button class="btn btn-primary" onclick="resetAfterSubmit()" style="margin-top:1.5rem;">Submit Another Team</button>
+  </div>
+</div>
+
+<!-- RULES SECTION -->
+<div id="section-rules" class="section">
+  <h2 class="section-title">Rules & Scoring</h2>
+  <p class="section-intro">Everything you need to know. Simple format, maximum drama.</p>
+
+  <div class="rules-grid">
+    <div class="rules-card">
+      <h3>📋 Entries</h3>
+      <ul>
+        <li>Entry is <strong>$20 per team</strong></li>
+        <li>Submit as many teams as you like</li>
+        <li>All teams must be submitted before <strong>Thursday tee-off</strong></li>
+        <li>E-transfer payment to <strong>masterspoolofpools@gmail.com</strong></li>
+        <li>More entries = more chances to win!</li>
+      </ul>
+    </div>
+
+    <div class="rules-card">
+      <h3>🏆 Scoring</h3>
+      <p style="margin-bottom:0.8rem;">Points are awarded to each golfer on your team based on their final tournament finish. Your team score is the sum of all your golfers' points.</p>
+      <table class="score-table">
+        <tr><td>🥇 Win (1st place)</td><td>+8 pts</td></tr>
+        <tr><td>🥈 Top 3</td><td>+5 pts</td></tr>
+        <tr><td>Top 10</td><td>+3 pts</td></tr>
+        <tr><td>Top 25</td><td>+2 pts</td></tr>
+        <tr><td>Made Cut</td><td>+1 pt</td></tr>
+        <tr><td class="neg">Missed Cut / DNS / WD / DQ</td><td class="neg">-1 pt</td></tr>
+      </table>
+    </div>
+
+    <div class="rules-card">
+      <h3>⛳ Salary Cap</h3>
+      <p>Each team has <strong>50 "dollars"</strong> to spend. Pick as many golfers as you like as long as their total salary ≤ 50. Salaries are based on DraftKings rates. You don't have to spend the full 50.</p>
+    </div>
+
+    <div class="rules-card">
+      <h3>💰 Payout</h3>
+      <ul>
+        <li>100% of entry fees returned as prizes</li>
+        <li>Winner receives ~25% of the pot</li>
+        <li>As many prize positions as possible</li>
+        <li>Tied teams in the money share the average of positional payouts</li>
+        <li>$40 deducted from pot for website costs</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Salary Table -->
+  <div class="salary-section">
+    <h3>2026 Player Salaries</h3>
+    <p style="font-style:italic; color:var(--text-light); margin-bottom:1.2rem; font-size:1rem;">Based on DraftKings rates. Build your team within the 50-point cap.</p>
+    <div class="salary-tiers" id="salary-tiers">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN SECTION -->
+<div id="section-admin" class="section">
+  <h2 class="section-title">Admin Dashboard</h2>
+
+  <div class="admin-gate" id="admin-gate">
+    <h2>🔒 Admin Access</h2>
+    <p>Enter your 4-digit PIN to access the admin dashboard.</p>
+    <div class="pin-input">
+      <input type="password" maxlength="1" class="pin-digit" id="pin-0" oninput="pinNext(0)">
+      <input type="password" maxlength="1" class="pin-digit" id="pin-1" oninput="pinNext(1)">
+      <input type="password" maxlength="1" class="pin-digit" id="pin-2" oninput="pinNext(2)">
+      <input type="password" maxlength="1" class="pin-digit" id="pin-3" oninput="pinCheck()">
+    </div>
+    <p id="pin-error" style="color:var(--red); font-size:0.9rem; display:none;">Incorrect PIN. Try again.</p>
+  </div>
+
+  <div class="admin-panels" id="admin-panels">
+    <div class="admin-panel" style="grid-column:1/-1;">
+      <div class="stats-row" id="admin-stats">
+        <div class="stat-box"><span class="stat-val" id="a-teams">0</span><span class="stat-lbl">Teams</span></div>
+        <div class="stat-box"><span class="stat-val" id="a-entrants">0</span><span class="stat-lbl">Entrants</span></div>
+        <div class="stat-box"><span class="stat-val" id="a-pot">$0</span><span class="stat-lbl">Prize Pot</span></div>
+        <div class="stat-box"><span class="stat-val" id="a-paid">0</span><span class="stat-lbl">Paid</span></div>
+        <div class="stat-box"><span class="stat-val" id="a-unpaid">0</span><span class="stat-lbl">Unpaid</span></div>
+      </div>
+    </div>
+
+    <div class="admin-panel">
+      <h3>📧 Send Invitation Email</h3>
+      <p style="font-size:0.95rem; color:var(--text-light); margin-bottom:1rem; line-height:1.6;">Preview and send the annual invitation to all registered emails.</p>
+      <div class="email-template-box" id="invite-preview">Good evening to all! It is my great pleasure to invite you to the 2026 playing of The Masters Pool Of Pools!
+
+We are back with the website, the familiar patented format, and the World Famous Live Leaderboard. Everything you need is on the website.
+
+To enter, please visit masterspoolofpools.com to review the "Rules & Scoring" page and make your entries on the "Enter a Team" page.
+
+Entry is still just $20 per team. E-transfers to masterspoolofpools@gmail.com.
+
+See you in Augusta,
+Ben</div>
+      <button class="btn btn-primary" onclick="showToast('📧 Opening your email client with the invitation draft…')" style="width:100%;">Draft Invitation Email</button>
+    </div>
+
+    <div class="admin-panel">
+      <h3>📊 Send Daily Standings Update</h3>
+      <p style="font-size:0.95rem; color:var(--text-light); margin-bottom:1rem; line-height:1.6;">Send the current leaderboard snapshot to all participants.</p>
+      <div class="email-template-box">Good morning Poolies!
+
+Here are your standings after Round [X] of the 2026 Masters.
+
+🏆 Current Leader: [TEAM NAME] — [SCORE] pts
+2nd: [TEAM NAME] — [SCORE] pts
+3rd: [TEAM NAME] — [SCORE] pts
+
+Full leaderboard: masterspoolofpools.com
+
+See you tomorrow,
+Ben</div>
+      <button class="btn btn-primary" onclick="showToast('📊 Standings email draft ready — check your Gmail!')" style="width:100%; background:var(--green-mid);">Draft Standings Email</button>
+    </div>
+
+    <div class="admin-panel">
+      <h3>💰 Payment Tracker</h3>
+      <p style="font-size:0.9rem; color:var(--text-light); margin-bottom:1rem;">Mark entrants as paid/unpaid. Data saved locally.</p>
+      <table class="payout-table" id="payment-table">
+        <thead><tr><th>Name</th><th>Teams</th><th>Owes</th><th>Status</th></tr></thead>
+        <tbody id="payment-body"></tbody>
+      </table>
+    </div>
+
+    <div class="admin-panel">
+      <h3>🏆 Prize Calculator</h3>
+      <p style="font-size:0.9rem; color:var(--text-light); margin-bottom:1rem;">Estimated payouts based on current entries.</p>
+      <table class="payout-table" id="payout-table">
+        <thead><tr><th>Position</th><th>Payout</th></tr></thead>
+        <tbody id="payout-body"></tbody>
+      </table>
+      <p style="font-size:0.8rem; color:var(--text-light); margin-top:0.8rem; font-style:italic;">*After $40 website fee deduction. Tied positions share average payout.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p><strong>Masters Pool of Pools</strong> · Augusta National · Since 2021</p>
+  <p style="margin-top:0.5rem;">Questions? Email <strong>benssimmonds@gmail.com</strong> · E-transfers to <strong>masterspoolofpools@gmail.com</strong></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── GOLFER DATA (2025 salaries — update each year) ──
+const GOLFERS = [
+  {name:"Scottie Scheffler", salary:19},
+  {name:"Rory McIlroy", salary:17},
+  {name:"Ludvig Åberg", salary:16},
+  {name:"Collin Morikawa", salary:15},
+  {name:"Jon Rahm", salary:15},
+  {name:"Xander Schauffele", salary:14},
+  {name:"Bryson DeChambeau", salary:14},
+  {name:"Justin Thomas", salary:14},
+  {name:"Viktor Hovland", salary:13},
+  {name:"Brooks Koepka", salary:13},
+  {name:"Joaquin Niemann", salary:13},
+  {name:"Hideki Matsuyama", salary:13},
+  {name:"Tommy Fleetwood", salary:13},
+  {name:"Jordan Spieth", salary:12},
+  {name:"Shane Lowry", salary:12},
+  {name:"Patrick Cantlay", salary:12},
+  {name:"Russell Henley", salary:11},
+  {name:"Min Woo Lee", salary:11},
+  {name:"Will Zalatoris", salary:11},
+  {name:"Tyrrell Hatton", salary:11},
+  {name:"Cameron Smith", salary:11},
+  {name:"Corey Conners", salary:10},
+  {name:"Wyndham Clark", salary:10},
+  {name:"Akshay Bhatia", salary:10},
+  {name:"Robert MacIntyre", salary:10},
+  {name:"Tony Finau", salary:10},
+  {name:"Sahith Theegala", salary:9},
+  {name:"Tom Kim", salary:9},
+  {name:"Jason Day", salary:9},
+  {name:"Sam Burns", salary:9},
+  {name:"Sepp Straka", salary:9},
+  {name:"Dustin Johnson", salary:9},
+  {name:"Sungjae Im", salary:8},
+  {name:"Patrick Reed", salary:8},
+  {name:"Adam Scott", salary:8},
+  {name:"Maverick McNealy", salary:8},
+  {name:"Sergio Garcia", salary:8},
+  {name:"Justin Rose", salary:8},
+  {name:"Daniel Berger", salary:8},
+  {name:"Keegan Bradley", salary:7},
+  {name:"Billy Horschel", salary:7},
+  {name:"Cameron Young", salary:7},
+  {name:"Brian Harman", salary:7},
+  {name:"Aaron Rai", salary:7},
+  {name:"Thomas Detry", salary:7},
+  {name:"Nicolai Højgaard", salary:7},
+  {name:"Max Homa", salary:6},
+  {name:"Harris English", salary:6},
+  {name:"Phil Mickelson", salary:6},
+  {name:"Lucas Glover", salary:6},
+  {name:"Taylor Pendrith", salary:6},
+  {name:"Nick Dunlap", salary:6},
+  {name:"Michael Kim", salary:6},
+  {name:"Nick Taylor", salary:5},
+  {name:"J.T. Poston", salary:5},
+  {name:"Austin Eckroat", salary:5},
+  {name:"Matthieu Pavon", salary:5},
+  {name:"Joe Highsmith", salary:5},
+  {name:"Tom Hoge", salary:5},
+  {name:"Denny McCarthy", salary:5},
+  {name:"Stephan Jaeger", salary:5},
+  {name:"Bubba Watson", salary:4},
+  {name:"Danny Willett", salary:4},
+  {name:"Adam Schenk", salary:4},
+  {name:"Kevin Yu", salary:4},
+  {name:"Brian Campbell", salary:4},
+  {name:"Jose Luis Ballester", salary:4},
+  {name:"Thriston Lawrence", salary:4},
+  {name:"Mike Weir", salary:3},
+  {name:"Rafael Campos", salary:3},
+  {name:"Angel Cabrera", salary:3},
+  {name:"Hiroshi Tai", salary:3},
+];
+
+const CAP = 50;
+const ADMIN_PIN = "2026"; // change this!
+
+// ── STATE ──
+let selectedGolfers = new Set();
+let submissions = JSON.parse(localStorage.getItem('mpop_submissions') || '[]');
+let paymentStatus = JSON.parse(localStorage.getItem('mpop_payments') || '{}');
+let adminUnlocked = false;
+let lbSortDir = {};
+
+// ── NAV ──
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'leaderboard') renderLeaderboard();
+  if (id === 'rules') renderSalaryTiers();
+  if (id === 'admin' && adminUnlocked) renderAdminDashboard();
+  if (id === 'enter') renderGolferGrid();
+  return false;
+}
+
+// ── GOLFER GRID ──
+function renderGolferGrid() {
+  const grid = document.getElementById('golfer-grid');
+  const tiers = {};
+  GOLFERS.forEach(g => {
+    if (!tiers[g.salary]) tiers[g.salary] = [];
+    tiers[g.salary].push(g);
+  });
+  const sorted = Object.keys(tiers).map(Number).sort((a,b) => b-a);
+  let html = '';
+  sorted.forEach(salary => {
+    html += `<div class="tier-header">Salary: ${salary}</div>`;
+    tiers[salary].forEach(g => {
+      const sel = selectedGolfers.has(g.name);
+      const used = getCapUsed();
+      const wouldExceed = !sel && used + g.salary > CAP;
+      html += `<div class="golfer-chip${sel?' selected':''}${wouldExceed?' disabled':''}" onclick="toggleGolfer('${g.name.replace(/'/g,"\\'")}',${g.salary})">
+        <div class="golfer-check">${sel?'✓':''}</div>
+        <span class="golfer-name">${g.name}</span>
+        <span class="golfer-salary">${g.salary}</span>
+      </div>`;
+    });
+  });
+  grid.innerHTML = html;
+}
+
+function toggleGolfer(name, salary) {
+  if (selectedGolfers.has(name)) {
+    selectedGolfers.delete(name);
+  } else {
+    if (getCapUsed() + salary > CAP) return;
+    selectedGolfers.add(name);
+  }
+  updateCapMeter();
+  renderGolferGrid();
+}
+
+function getCapUsed() {
+  let total = 0;
+  selectedGolfers.forEach(name => {
+    const g = GOLFERS.find(g => g.name === name);
+    if (g) total += g.salary;
+  });
+  return total;
+}
+
+function updateCapMeter() {
+  const used = getCapUsed();
+  const pct = Math.min(used / CAP * 100, 100);
+  const over = used > CAP;
+  document.getElementById('cap-display').textContent = `${used} / ${CAP}`;
+  document.getElementById('cap-display').className = 'cap-number' + (over?' over':'');
+  document.getElementById('cap-bar').style.width = pct + '%';
+  document.getElementById('cap-bar').className = 'cap-bar-fill' + (over?' over':'');
+  document.getElementById('cap-status').textContent = over
+    ? `⚠️ Over cap by ${used - CAP}! Remove a golfer.`
+    : selectedGolfers.size === 0 ? 'Select your golfers below ↓'
+    : `✓ ${CAP - used} remaining · ${selectedGolfers.size} golfer(s) selected`;
+  document.getElementById('selected-count').textContent = selectedGolfers.size;
+  document.getElementById('selected-salary').textContent = used;
+}
+
+function clearForm() {
+  selectedGolfers.clear();
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-email').value = '';
+  document.getElementById('f-teamname').value = '';
+  document.getElementById('f-numteams').value = '1';
+  updateCapMeter();
+  renderGolferGrid();
+}
+
+function resetAfterSubmit() {
+  document.getElementById('form-success').classList.remove('show');
+  document.getElementById('form-main').style.display = '';
+  clearForm();
+}
+
+// ── SUBMIT ──
+function submitTeam() {
+  const name = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const teamName = document.getElementById('f-teamname').value.trim();
+  const errEl = document.getElementById('form-error');
+
+  if (!name || !email || !teamName) {
+    errEl.textContent = 'Please fill in all fields.';
+    errEl.style.display = 'inline';
+    return;
+  }
+  if (selectedGolfers.size === 0) {
+    errEl.textContent = 'Please select at least one golfer.';
+    errEl.style.display = 'inline';
+    return;
+  }
+  if (getCapUsed() > CAP) {
+    errEl.textContent = 'Your team exceeds the salary cap of 50.';
+    errEl.style.display = 'inline';
+    return;
+  }
+
+  errEl.style.display = 'none';
+
+  const submission = {
+    id: Date.now(),
+    name, email, teamName,
+    golfers: [...selectedGolfers],
+    salary: getCapUsed(),
+    timestamp: new Date().toISOString(),
+    paid: false,
+    score: 0
+  };
+
+  submissions.push(submission);
+  localStorage.setItem('mpop_submissions', JSON.stringify(submissions));
+
+  document.getElementById('form-main').style.display = 'none';
+  document.getElementById('form-success').classList.add('show');
+  showToast(`🏆 Team "${teamName}" submitted! Don't forget to e-transfer $20.`);
+}
+
+// ── LEADERBOARD ──
+function renderLeaderboard(filter='', ownerFilter=null) {
+  let teams = [...submissions];
+
+  // Sort by score descending
+  teams.sort((a,b) => b.score - a.score);
+
+  // Assign ranks (with ties)
+  let rank = 1;
+  for (let i = 0; i < teams.length; i++) {
+    if (i > 0 && teams[i].score === teams[i-1].score) {
+      teams[i].rank = teams[i-1].rank;
+    } else {
+      teams[i].rank = rank;
+    }
+    rank++;
+  }
+
+  if (filter) {
+    const q = filter.toLowerCase();
+    teams = teams.filter(t => t.teamName.toLowerCase().includes(q) || t.name.toLowerCase().includes(q));
+  }
+
+  if (ownerFilter === 'in-money') {
+    const inMoneyPositions = getInMoneyPositions(submissions.length);
+    teams = teams.filter(t => t.rank <= inMoneyPositions);
+  }
+
+  const tbody = document.getElementById('lb-body');
+  const empty = document.getElementById('lb-empty');
+
+  if (teams.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = teams.map(t => {
+    const rankClass = t.rank === 1 ? 'rank-1' : t.rank === 2 ? 'rank-2' : t.rank === 3 ? 'rank-3' : 'rank-other';
+    const scoreClass = t.score > 0 ? 'score-positive' : t.score < 0 ? 'score-negative' : 'score-zero';
+    const inMoney = getInMoneyPositions(submissions.length);
+    const prize = t.rank === 1 ? '<span class="prize-badge prize-1st">🥇 1st</span>'
+      : t.rank === 2 ? '<span class="prize-badge prize-2nd">🥈 2nd</span>'
+      : t.rank <= inMoney ? '<span class="prize-badge prize-other">💰 Prize</span>'
+      : '—';
+
+    return `<tr>
+      <td><span class="rank-badge ${rankClass}">${t.rank}</span></td>
+      <td class="team-name-cell">${t.teamName}</td>
+      <td class="owner-cell">${t.name}</td>
+      <td class="${scoreClass}">${t.score > 0 ? '+':''}${t.score}</td>
+      <td class="golfers-cell">${t.golfers.join(', ')}</td>
+      <td>${prize}</td>
+    </tr>`;
+  }).join('');
+
+  // Update home stats
+  const uniqueOwners = new Set(submissions.map(s => s.email)).size;
+  document.getElementById('stat-teams').textContent = submissions.length;
+  document.getElementById('stat-pot').textContent = '$' + Math.max(0, submissions.length * 20 - 40).toLocaleString();
+  document.getElementById('stat-players').textContent = uniqueOwners;
+}
+
+function filterLeaderboard(q) { renderLeaderboard(q); }
+
+let activeOwnerFilter = null;
+function filterByOwner(filter, el) {
+  activeOwnerFilter = filter;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderLeaderboard(document.getElementById('lb-search').value, filter);
+}
+
+function getInMoneyPositions(totalTeams) {
+  if (totalTeams < 20) return 1;
+  if (totalTeams < 50) return 3;
+  if (totalTeams < 100) return 5;
+  return Math.floor(totalTeams * 0.07);
+}
+
+// ── SALARY TIERS ──
+function renderSalaryTiers() {
+  const tiers = {};
+  GOLFERS.forEach(g => {
+    if (!tiers[g.salary]) tiers[g.salary] = [];
+    tiers[g.salary].push(g.name);
+  });
+  const sorted = Object.keys(tiers).map(Number).sort((a,b) => b-a);
+  const container = document.getElementById('salary-tiers');
+  container.innerHTML = sorted.map(salary => `
+    <div class="salary-tier">
+      <div class="salary-tier-header">
+        <span class="salary-val">${salary}</span>
+        <span>${tiers[salary].length} player${tiers[salary].length>1?'s':''}</span>
+      </div>
+      <div class="salary-names">
+        ${tiers[salary].map(n => `<span class="salary-name-tag">${n}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── ADMIN ──
+function pinNext(i) {
+  const val = document.getElementById(`pin-${i}`).value;
+  if (val && i < 3) document.getElementById(`pin-${i+1}`).focus();
+}
+
+function pinCheck() {
+  const pin = [0,1,2,3].map(i => document.getElementById(`pin-${i}`).value).join('');
+  if (pin === ADMIN_PIN) {
+    adminUnlocked = true;
+    document.getElementById('admin-gate').style.display = 'none';
+    document.getElementById('admin-panels').classList.add('visible');
+    renderAdminDashboard();
+  } else {
+    document.getElementById('pin-error').style.display = 'block';
+    [0,1,2,3].forEach(i => document.getElementById(`pin-${i}`).value = '');
+    document.getElementById('pin-0').focus();
+  }
+}
+
+function renderAdminDashboard() {
+  const uniqueOwners = [...new Set(submissions.map(s => s.email))];
+  const paidCount = submissions.filter(s => paymentStatus[s.id]).length;
+
+  document.getElementById('a-teams').textContent = submissions.length;
+  document.getElementById('a-entrants').textContent = uniqueOwners.length;
+  const pot = Math.max(0, submissions.length * 20 - 40);
+  document.getElementById('a-pot').textContent = '$' + pot.toLocaleString();
+  document.getElementById('a-paid').textContent = paidCount;
+  document.getElementById('a-unpaid').textContent = submissions.length - paidCount;
+
+  // Payment table — group by owner
+  const byOwner = {};
+  submissions.forEach(s => {
+    if (!byOwner[s.email]) byOwner[s.email] = {name: s.name, email: s.email, teams: []};
+    byOwner[s.email].teams.push(s);
+  });
+
+  const pbody = document.getElementById('payment-body');
+  pbody.innerHTML = Object.values(byOwner).map(o => {
+    const allPaid = o.teams.every(t => paymentStatus[t.id]);
+    const owes = o.teams.length * 20;
+    return `<tr>
+      <td>${o.name}</td>
+      <td>${o.teams.length}</td>
+      <td>$${owes}</td>
+      <td>
+        <span class="${allPaid?'paid-badge':'unpaid-badge'}" style="cursor:pointer" onclick="togglePayment('${o.email}')">
+          ${allPaid ? '✓ Paid' : '⚠ Unpaid'}
+        </span>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Payout calculator
+  const prizes = calcPayouts(submissions.length, pot);
+  document.getElementById('payout-body').innerHTML = prizes.map((p,i) =>
+    `<tr><td>${ordinal(i+1)}</td><td>$${p.toFixed(0)}</td></tr>`
+  ).join('');
+}
+
+function togglePayment(email) {
+  submissions.filter(s => s.email === email).forEach(s => {
+    paymentStatus[s.id] = !paymentStatus[s.id];
+  });
+  localStorage.setItem('mpop_payments', JSON.stringify(paymentStatus));
+  renderAdminDashboard();
+}
+
+function calcPayouts(numTeams, pot) {
+  if (numTeams === 0) return [];
+  const positions = getInMoneyPositions(numTeams);
+  const payouts = [];
+  // Winner gets 25%, then distribute rest
+  let remaining = pot;
+  const winnerPct = 0.25;
+  payouts.push(Math.round(pot * winnerPct));
+  remaining -= payouts[0];
+  for (let i = 1; i < positions; i++) {
+    const share = Math.round(remaining / (positions - i + 1));
+    payouts.push(share);
+    remaining -= share;
+  }
+  if (positions > 1) payouts[payouts.length - 1] += remaining;
+  return payouts.slice(0, positions);
+}
+
+function ordinal(n) {
+  const s = ['th','st','nd','rd'];
+  const v = n % 100;
+  return n + (s[(v-20)%10] || s[v] || s[0]);
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  updateCapMeter();
+  // If there are demo submissions, show them
+  if (submissions.length > 0) {
+    document.getElementById('stat-teams').textContent = submissions.length;
+    const uniqueOwners = new Set(submissions.map(s => s.email)).size;
+    document.getElementById('stat-players').textContent = uniqueOwners;
+    document.getElementById('stat-pot').textContent = '$' + Math.max(0, submissions.length * 20 - 40).toLocaleString();
+  }
+});
+</script>
+</body>
+</html>
