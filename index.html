@@ -1472,80 +1472,89 @@ function checkGatePassword() {
   }
 }
 
-// ── GOLFER DATA (2025 salaries — update each year) ──
+// ── GOLFER DATA (2026 salaries) ──
 const GOLFERS = [
-  {name:"Scottie Scheffler", salary:19},
+  {name:"Scottie Scheffler", salary:21},
   {name:"Rory McIlroy", salary:17},
-  {name:"Ludvig Åberg", salary:16},
-  {name:"Collin Morikawa", salary:15},
+  {name:"Bryson DeChambeau", salary:15},
   {name:"Jon Rahm", salary:15},
-  {name:"Xander Schauffele", salary:14},
-  {name:"Bryson DeChambeau", salary:14},
-  {name:"Justin Thomas", salary:14},
-  {name:"Viktor Hovland", salary:13},
-  {name:"Brooks Koepka", salary:13},
-  {name:"Joaquin Niemann", salary:13},
-  {name:"Hideki Matsuyama", salary:13},
+  {name:"Ludvig Aberg", salary:14},
+  {name:"Xander Schauffele", salary:13},
+  {name:"Collin Morikawa", salary:13},
   {name:"Tommy Fleetwood", salary:13},
-  {name:"Jordan Spieth", salary:12},
-  {name:"Shane Lowry", salary:12},
-  {name:"Patrick Cantlay", salary:12},
-  {name:"Russell Henley", salary:11},
-  {name:"Min Woo Lee", salary:11},
+  {name:"Cameron Young", salary:13},
+  {name:"Justin Rose", salary:13},
+  {name:"Patrick Reed", salary:12},
+  {name:"Hideki Matsuyama", salary:12},
+  {name:"Viktor Hovland", salary:12},
+  {name:"Matt Fitzpatrick", salary:12},
+  {name:"Robert MacIntyre", salary:12},
+  {name:"Tyrrell Hatton", salary:12},
+  {name:"Shane Lowry", salary:11},
   {name:"Will Zalatoris", salary:11},
-  {name:"Tyrrell Hatton", salary:11},
-  {name:"Cameron Smith", salary:11},
-  {name:"Corey Conners", salary:10},
-  {name:"Wyndham Clark", salary:10},
+  {name:"Brooks Koepka", salary:11},
+  {name:"Jordan Spieth", salary:11},
+  {name:"Joaquin Niemann", salary:11},
+  {name:"Sepp Straka", salary:11},
+  {name:"Patrick Cantlay", salary:11},
+  {name:"Russell Henley", salary:11},
   {name:"Akshay Bhatia", salary:10},
-  {name:"Robert MacIntyre", salary:10},
-  {name:"Tony Finau", salary:10},
+  {name:"Si Woo Kim", salary:10},
+  {name:"Min Woo Lee", salary:10},
+  {name:"Corey Conners", salary:10},
+  {name:"Ben Griffin", salary:10},
+  {name:"Jason Day", salary:10},
+  {name:"Cameron Smith", salary:10},
+  {name:"Sungjae Im", salary:10},
+  {name:"Jacob Bridgeman", salary:10},
+  {name:"Sam Burns", salary:10},
+  {name:"Harris English", salary:10},
+  {name:"Max Homa", salary:10},
+  {name:"Marco Penge", salary:10},
   {name:"Sahith Theegala", salary:9},
   {name:"Tom Kim", salary:9},
-  {name:"Jason Day", salary:9},
-  {name:"Sam Burns", salary:9},
-  {name:"Sepp Straka", salary:9},
+  {name:"Wyndham Clark", salary:9},
+  {name:"Sergio Garcia", salary:9},
+  {name:"Alex Noren", salary:9},
   {name:"Dustin Johnson", salary:9},
-  {name:"Sungjae Im", salary:8},
-  {name:"Patrick Reed", salary:8},
+  {name:"Keegan Bradley", salary:9},
+  {name:"Tom McKibbin", salary:9},
+  {name:"Rasmus Hojgaard", salary:9},
+  {name:"Harry Hall", salary:9},
+  {name:"Kurt Kitayama", salary:9},
+  {name:"Ryan Gerard", salary:9},
+  {name:"Aaron Rai", salary:9},
+  {name:"Rasmus Neergaard", salary:8},
+  {name:"John Keefer", salary:8},
+  {name:"Nicolas Echavarria", salary:8},
+  {name:"Michael Kim", salary:8},
+  {name:"Michael Brennan", salary:8},
+  {name:"Casey Jarvis", salary:8},
   {name:"Adam Scott", salary:8},
-  {name:"Maverick McNealy", salary:8},
-  {name:"Sergio Garcia", salary:8},
-  {name:"Justin Rose", salary:8},
-  {name:"Daniel Berger", salary:8},
-  {name:"Keegan Bradley", salary:7},
-  {name:"Billy Horschel", salary:7},
-  {name:"Cameron Young", salary:7},
-  {name:"Brian Harman", salary:7},
-  {name:"Aaron Rai", salary:7},
-  {name:"Thomas Detry", salary:7},
-  {name:"Nicolai Højgaard", salary:7},
-  {name:"Max Homa", salary:6},
-  {name:"Harris English", salary:6},
-  {name:"Phil Mickelson", salary:6},
-  {name:"Lucas Glover", salary:6},
-  {name:"Taylor Pendrith", salary:6},
-  {name:"Nick Dunlap", salary:6},
-  {name:"Michael Kim", salary:6},
-  {name:"Nick Taylor", salary:5},
-  {name:"J.T. Poston", salary:5},
-  {name:"Austin Eckroat", salary:5},
-  {name:"Matthieu Pavon", salary:5},
-  {name:"Joe Highsmith", salary:5},
-  {name:"Tom Hoge", salary:5},
-  {name:"Denny McCarthy", salary:5},
-  {name:"Stephan Jaeger", salary:5},
-  {name:"Bubba Watson", salary:4},
-  {name:"Danny Willett", salary:4},
-  {name:"Adam Schenk", salary:4},
-  {name:"Kevin Yu", salary:4},
-  {name:"Brian Campbell", salary:4},
-  {name:"Jose Luis Ballester", salary:4},
-  {name:"Thriston Lawrence", salary:4},
-  {name:"Mike Weir", salary:3},
-  {name:"Rafael Campos", salary:3},
-  {name:"Angel Cabrera", salary:3},
-  {name:"Hiroshi Tai", salary:3},
+  {name:"Stephan Jaeger", salary:8},
+  {name:"Taylor Pendrith", salary:8},
+  {name:"Nick Taylor", salary:8},
+  {name:"Laurie Canter", salary:8},
+  {name:"Austin Eckroat", salary:8},
+  {name:"J.T. Poston", salary:8},
+  {name:"Andrew Novak", salary:8},
+  {name:"Sam Stevens", salary:8},
+  {name:"Phil Mickelson", salary:8},
+  {name:"Davis Riley", salary:8},
+  {name:"Kristoffer Reitan", salary:7},
+  {name:"Hao-Tong Li", salary:7},
+  {name:"Charl Schwartzel", salary:7},
+  {name:"Bubba Watson", salary:7},
+  {name:"Zach Johnson", salary:7},
+  {name:"Aldrich Potgieter", salary:7},
+  {name:"Naoyuki Kataoka", salary:7},
+  {name:"Brian Campbell", salary:7},
+  {name:"Danny Willett", salary:7},
+  {name:"Jackson Herrington", salary:7},
+  {name:"Angel Cabrera", salary:6},
+  {name:"Ethan Fang", salary:6},
+  {name:"Mateo Pulcini", salary:6},
+  {name:"Jose Maria Olazabal", salary:6},
 ];
 
 const CAP = 50;
@@ -1652,11 +1661,16 @@ function resetAfterSubmit() {
 }
 
 // ── SUBMIT ──
-function submitTeam() {
+// ── REPLACE THIS URL after deploying your Google Apps Script ──
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3-t2KE20zJcoNHYXuaQhPeq6ouNf8pwbp7I6uOmMAMbuJUGI79OQwGJ4qomeNWbGjRg/exec";
+
+async function submitTeam() {
   const name = document.getElementById('f-name').value.trim();
   const email = document.getElementById('f-email').value.trim();
   const teamName = document.getElementById('f-teamname').value.trim();
+  const numTeams = document.getElementById('f-numteams').value;
   const errEl = document.getElementById('form-error');
+  const btn = document.getElementById('submit-btn');
 
   if (!name || !email || !teamName) {
     errEl.textContent = 'Please fill in all fields.';
@@ -1675,23 +1689,38 @@ function submitTeam() {
   }
 
   errEl.style.display = 'none';
+  btn.textContent = 'Submitting…';
+  btn.disabled = true;
 
   const submission = {
-    id: Date.now(),
-    name, email, teamName,
+    name,
+    email,
+    teamName,
+    numTeams,
     golfers: [...selectedGolfers],
     salary: getCapUsed(),
-    timestamp: new Date().toISOString(),
-    paid: false,
-    score: 0
+    timestamp: new Date().toISOString()
   };
 
-  submissions.push(submission);
-  localStorage.setItem('mpop_submissions', JSON.stringify(submissions));
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(submission)
+    });
 
-  document.getElementById('form-main').style.display = 'none';
-  document.getElementById('form-success').classList.add('show');
-  showToast(`🏆 Team "${teamName}" submitted! Don't forget to e-transfer $20.`);
+    // Success — show confirmation
+    document.getElementById('form-main').style.display = 'none';
+    document.getElementById('form-success').classList.add('show');
+    showToast(`🏆 Team "${teamName}" submitted! Don't forget to e-transfer $20.`);
+
+  } catch (err) {
+    errEl.textContent = 'Submission failed. Please try again or email your entry directly.';
+    errEl.style.display = 'inline';
+    btn.textContent = 'Submit Team →';
+    btn.disabled = false;
+  }
 }
 
 // ── LEADERBOARD ──
