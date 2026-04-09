@@ -607,6 +607,34 @@
   footer a { color: #8fbb9e; text-decoration: none; }
   footer a:hover { color: var(--gold); }
 
+
+  /* ─── FIELD PAGE ─── */
+  .field-score-under { color: #1a6b3a; font-weight: 700; }
+  .field-score-over  { color: #c0392b; font-weight: 700; }
+  .field-score-even  { color: var(--text); }
+  .field-cut-badge   { font-size: 0.68rem; font-weight: 700; color: #c0392b; margin-left: 4px; }
+  .field-wd-badge    { font-size: 0.68rem; font-weight: 700; color: var(--muted); margin-left: 4px; }
+  .owned-bar-wrap    { display: flex; align-items: center; gap: 0.4rem; }
+  .owned-bar         { height: 5px; background: var(--green); border-radius: 3px; min-width: 2px; }
+  .owned-pct         { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+  /* Leaderboard expand rows */
+  .lb-expand-row { display: none; background: rgba(26,74,46,0.03); }
+  .lb-expand-row.open { display: table-row; }
+  .lb-expand-row td { padding: 0.75rem 1rem 0.75rem 2rem; }
+  .lb-expand-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 0.4rem; }
+  .lb-expand-player {
+    background: var(--white); border: 1px solid var(--border);
+    padding: 0.4rem 0.75rem; font-size: 0.8rem;
+    display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
+  }
+  .ep-name { font-weight: 700; }
+  .ep-meta { color: var(--muted); font-size: 0.72rem; }
+  .ep-pts-pos { color: var(--green); font-weight: 700; }
+  .ep-pts-neg { color: #c0392b; font-weight: 700; }
+  .lb-team-row { cursor: pointer; }
+  .expand-arrow { font-size: 0.65rem; color: var(--muted); transition: transform 0.2s; display: inline-block; }
+  .lb-team-row.row-expanded .expand-arrow { transform: rotate(180deg); }
+
   /* ─── MISC ─── */
   .divider { border: none; border-top: 2px solid var(--border); margin: 2rem 0; }
   .search-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
@@ -635,7 +663,7 @@
     <span>⛳ Salary Cap: 50 per team</span>
     <span>🕐 Deadline: Thursday morning tee-off</span>
     <span>🏌️ Win = 8pts · Top 3 = 5pts · Top 10 = 3pts · Top 25 = 2pts · Made Cut = 1pt · Missed Cut = -1pt</span>
-    <span>📧 E-transfers to: masterspoolofpools@gmail.com</span>
+    <span>📧 E-transfers to: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6c010d1f18091e1f1c030300030a1c0303001f2c0b010d0500420f0301">[email&#160;protected]</a></span>
     <span>🌿 The World Famous Live Leaderboard — Live All Weekend</span>
   </div>
 </div>
@@ -653,6 +681,7 @@
       <a href="#" onclick="showPage('home');return false;" class="active" data-page="home">Home</a>
       <a href="#" onclick="showPage('leaderboard');return false;" data-page="leaderboard">Leaderboard</a>
       <a href="#" onclick="showPage('lookup');return false;" data-page="lookup">Team Lookup</a>
+      <a href="#" onclick="showPage('field');return false;" data-page="field">Field</a>
       <a href="#" onclick="showPage('enter');return false;" data-page="enter" style="display:none">Enter a Team</a>
       <a href="#" onclick="showPage('rules');return false;" data-page="rules">Rules & Scoring</a>
       <a href="#" onclick="showPage('menu');return false;" data-page="menu">Menu</a>
@@ -670,7 +699,7 @@
       <img src="Poolofpoolslogo.webp" alt="Masters Pool of Pools" class="hero-logo">
       <div class="hero-tagline">The World Famous Live Leaderboard</div>
       <div class="hero-btns">
-        <a href="#" onclick="showPage('enter')" style="display:none">ENTER A TEAM — $20</a>
+        <a href="#" onclick="showPage('enter');return false;" class="btn btn-gold">Enter a Team — $20</a>
         <a href="#" onclick="showPage('leaderboard');return false;" class="btn btn-outline">View Leaderboard</a>
       </div>
     </div>
@@ -696,7 +725,7 @@
   <div class="info-stripe">
     <strong>2026 Masters · Augusta National</strong> &nbsp;·&nbsp;
     Entry Fee: <strong>$20/team</strong> · Salary Cap: <strong>50</strong> · Deadline: <strong>Thursday tee-off</strong><br>
-    E-transfer: <strong><a href="mailto:masterspoolofpools@gmail.com">masterspoolofpools@gmail.com</a></strong> · Treasury Secretary: Daniel Simmonds
+    E-transfer: <strong><a href="/cdn-cgi/l/email-protection#c4a9a5b7b0a1b6b7b4ababa8aba2b4ababa8b784a3a9a5ada8eaa7aba9"><span class="__cf_email__" data-cfemail="c4a9a5b7b0a1b6b7b4ababa8aba2b4ababa8b784a3a9a5ada8eaa7aba9">[email&#160;protected]</span></a></strong> · Treasury Secretary: Daniel Simmonds
   </div>
 
   <div class="section">
@@ -704,10 +733,10 @@
     <div class="welcome-text">
       <p>It is once again that most glorious time of year. The azaleas are blooming, the pimento cheese sandwiches are being prepared, and the Masters Pool of Pools is open for business.</p>
       <p>Pick your team using the salary cap system, submit before Thursday's tee-off, and watch the <strong>World Famous Live Leaderboard</strong> all weekend long.</p>
-      <p>Submit as many teams as you like — $20 each, no limit. E-transfer your entry fee to <a href="mailto:masterspoolofpools@gmail.com" style="color:var(--green);font-weight:700">masterspoolofpools@gmail.com</a> after submitting.</p>
+      <p>Submit as many teams as you like — $20 each, no limit. E-transfer your entry fee to <a href="/cdn-cgi/l/email-protection#8ce1edfff8e9fefffce3e3e0e3eafce3e3e0ffccebe1ede5e0a2efe3e1" style="color:var(--green);font-weight:700"><span class="__cf_email__" data-cfemail="7419150700110607041b1b181b12041b1b1807341319151d185a171b19">[email&#160;protected]</span></a> after submitting.</p>
     </div>
     <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap;">
-      <a href="#" onclick="showPage('enter')" style="display:none">Submit Your Team</a>
+      <a href="#" onclick="showPage('enter');return false;" class="btn btn-green">Submit Your Team</a>
       <a href="#" onclick="showPage('rules');return false;" class="btn btn-outline" style="color:var(--green);border-color:var(--green);">Read the Rules</a>
     </div>
   </div>
@@ -717,7 +746,10 @@
 <div id="page-leaderboard" class="page">
   <div class="section">
     <div class="section-title">World Famous Live Leaderboard</div>
-    <div class="lb-refresh" id="lb-refresh-time">Last updated: —</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+      <div class="lb-refresh" id="lb-refresh-time">Last updated: —</div>
+      <button onclick="fetchAllLiveData(true)" class="btn btn-green" style="padding:0.35rem 0.9rem;font-size:0.75rem;">&#8635; Refresh</button>
+    </div>
 
     <div class="lb-tabs">
       <button class="lb-tab active" onclick="setLbFilter('all',this)">All Teams</button>
@@ -732,6 +764,7 @@
         <option value="score-asc">Sort by Score (Low→High)</option>
         <option value="name">Sort by Team Name</option>
         <option value="owner">Sort by Owner</option>
+        <option value="holes-asc">Sort by Holes Remaining</option>
       </select>
     </div>
 
@@ -742,8 +775,8 @@
           <th onclick="toggleSort('name')">Team Name</th>
           <th onclick="toggleSort('owner')">Owner</th>
           <th onclick="toggleSort('score')">Score</th>
-          <th>Golfers</th>
-          <th>Prize</th>
+          <th onclick="toggleSort('holes')">Holes Left</th>
+          <th>Players &#9660;</th>
         </tr>
       </thead>
       <tbody id="lb-body">
@@ -764,11 +797,56 @@
     <div class="lookup-box">
       <h3>Search for a Team</h3>
       <div class="lookup-input-wrap">
-        <input type="text" id="lookup-input" placeholder="Enter team name or owner name..." oninput="lookupTeam()">
+        <input type="text" id="lookup-input" placeholder="Team name or owner name..." oninput="lookupTeam()">
+        <select id="lookup-player-filter" onchange="lookupTeam()" style="flex:1;min-width:200px;padding:0.7rem 1rem;border:1.5px solid var(--border);font-family:'Lato',sans-serif;font-size:0.9rem;background:var(--white);">
+          <option value="">— Filter by player —</option>
+        </select>
       </div>
+      <div id="lookup-count" style="font-size:0.82rem;color:var(--muted);margin-top:0.5rem;"></div>
     </div>
 
     <div id="lookup-results"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ MASTERS FIELD ═══════════════════════════════ -->
+<div id="page-field" class="page">
+  <div class="section">
+    <div class="section-title">Masters Field</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+      <div class="lb-refresh" id="field-refresh-time">Last updated: —</div>
+      <button onclick="fetchAllLiveData(true)" class="btn btn-green" style="padding:0.35rem 0.9rem;font-size:0.75rem;">&#8635; Refresh</button>
+    </div>
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="setFieldFilter('all',this)">All Players</button>
+      <button class="lb-tab" onclick="setFieldFilter('active',this)">Active</button>
+      <button class="lb-tab" onclick="setFieldFilter('cut',this)">Cut / WD</button>
+    </div>
+    <div class="lb-controls">
+      <input type="text" id="field-search" placeholder="&#128269; Search player..." oninput="renderField()">
+      <select id="field-sort" onchange="renderField()">
+        <option value="pos">Sort by Position</option>
+        <option value="pts">Sort by Pool Points</option>
+        <option value="owned">Sort by Most Owned</option>
+      </select>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Pos</th>
+          <th>Player</th>
+          <th>Score</th>
+          <th>Thru</th>
+          <th>Pool Pts</th>
+          <th>Owned</th>
+          <th>Holes Left</th>
+        </tr>
+      </thead>
+      <tbody id="field-body">
+        <tr><td colspan="7" class="empty-state"><p>Loading field...</p></td></tr>
+      </tbody>
+    </table>
+    <div id="field-cut-notice" style="margin-top:1rem;font-size:0.82rem;color:var(--muted);display:none;"></div>
   </div>
 </div>
 
@@ -823,7 +901,7 @@
         <div class="payment-note" style="margin-top:1.5rem">
           💳 <strong>Payment — $20 per team</strong><br>
           Please e-transfer your entry fee to Treasury Secretary Daniel at
-          <a href="mailto:masterspoolofpools@gmail.com">masterspoolofpools@gmail.com</a>
+          <a href="/cdn-cgi/l/email-protection#eb868a989f8e99989b848487848d9b84848798ab8c868a8287c5888486"><span class="__cf_email__" data-cfemail="7914180a0d1c0b0a09161615161f091616150a391e14181015571a1614">[email&#160;protected]</span></a>
           as soon as you submit your team. Entry is not confirmed until payment is received.
         </div>
 
@@ -840,7 +918,7 @@
       <p>
         Your team has been submitted! A confirmation email is on its way.<br>
         Now please send your <strong>$20 entry fee</strong> via e-transfer to<br>
-        <strong>masterspoolofpools@gmail.com</strong><br>
+        <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="224f435156475051524d4d4e4d44524d4d4e5162454f434b4e0c414d4f">[email&#160;protected]</a></strong><br>
         See you on the leaderboard. Good luck!
       </p>
       <button class="btn btn-outline" onclick="resetForm()">Submit Another Team</button>
@@ -860,7 +938,7 @@
         <li>Entry is <strong>$20 per team</strong></li>
         <li>Submit as many teams as you like</li>
         <li>All teams must be submitted before <strong>Thursday tee-off</strong></li>
-        <li>E-transfer payment to <a href="mailto:masterspoolofpools@gmail.com" style="color:var(--green);font-weight:700">masterspoolofpools@gmail.com</a></li>
+        <li>E-transfer payment to <a href="/cdn-cgi/l/email-protection#204d415354455253504f4f4c4f46504f4f4c5360474d41494c0e434f4d" style="color:var(--green);font-weight:700"><span class="__cf_email__" data-cfemail="214c405255445352514e4e4d4e47514e4e4d5261464c40484d0f424e4c">[email&#160;protected]</span></a></li>
       </ul>
     </div>
 
@@ -1032,12 +1110,551 @@ Ben</textarea>
 <footer>
   <p><strong>Masters Pool of Pools</strong> · Augusta National · Est. 2017</p>
   <p style="margin-top:0.5rem">
-    Questions? Email <a href="mailto:masterspoolofpools@gmail.com">masterspoolofpools@gmail.com</a> ·
-    E-transfers to <a href="mailto:masterspoolofpools@gmail.com">masterspoolofpools@gmail.com</a>
+    Questions? Email <a href="/cdn-cgi/l/email-protection#bad7dbc9cedfc8c9cad5d5d6d5dccad5d5d6c9faddd7dbd3d694d9d5d7"><span class="__cf_email__" data-cfemail="0d606c7e79687f7e7d626261626b7d6262617e4d6a606c6461236e6260">[email&#160;protected]</span></a> ·
+    E-transfers to <a href="/cdn-cgi/l/email-protection#f19c908285948382819e9e9d9e97819e9e9d82b1969c90989ddf929e9c"><span class="__cf_email__" data-cfemail="9bf6fae8effee9e8ebf4f4f7f4fdebf4f4f7e8dbfcf6faf2f7b5f8f4f6">[email&#160;protected]</span></a>
   </p>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ─── CONFIG ───────────────────────────────────────────────────
+const SITE_PASSWORD = 'augusta';
+const ADMIN_PIN = '2026';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJ1RblRToAesKiU8J1OhQoNZ0MlpBe6pflJQkyVjRt-bFKR6euZQgb5yP1GpsvsgKe/exec';
+
+// ─── PLAYER SALARIES ─────────────────────────────────────────
+const PLAYERS = [
+  {name:'Scottie Scheffler',sal:21},{name:'Rory McIlroy',sal:17},
+  {name:'Bryson DeChambeau',sal:15},{name:'Jon Rahm',sal:15},
+  {name:'Ludvig Aberg',sal:14},{name:'Xander Schauffele',sal:14},
+  {name:'Collin Morikawa',sal:14},{name:'Tommy Fleetwood',sal:13},
+  {name:'Cameron Young',sal:13},{name:'Justin Rose',sal:13},
+  {name:'Patrick Reed',sal:13},{name:'Hideki Matsuyama',sal:12},
+  {name:'Viktor Hovland',sal:12},{name:'Matt Fitzpatrick',sal:12},
+  {name:'Robert MacIntyre',sal:12},{name:'Brooks Koepka',sal:11},
+  {name:'Jordan Spieth',sal:11},{name:'Justin Thomas',sal:11},
+  {name:'Shane Lowry',sal:11},{name:'Tyrrell Hatton',sal:10},
+  {name:'Chris Gotterup',sal:10},{name:'Sepp Straka',sal:10},
+  {name:'Patrick Cantlay',sal:10},{name:'Russell Henley',sal:10},
+  {name:'Akshay Bhatia',sal:10},{name:'Si Woo Kim',sal:10},
+  {name:'Min Woo Lee',sal:9},{name:'Corey Conners',sal:9},
+  {name:'Ben Griffin',sal:9},{name:'Jason Day',sal:9},
+  {name:'Cameron Smith',sal:9},{name:'Sungjae Im',sal:9},
+  {name:'Nicolai Hojgaard',sal:9},{name:'Jacob Bridgeman',sal:8},
+  {name:'Sam Burns',sal:8},{name:'Jake Knapp',sal:8},
+  {name:'Harris English',sal:8},{name:'Max Homa',sal:8},
+  {name:'Marco Penge',sal:8},{name:'Gary Woodland',sal:8},
+  {name:'Adam Scott',sal:8},{name:'J.J. Spaun',sal:8},
+  {name:'Maverick McNealy',sal:8},{name:'Wyndham Clark',sal:7},
+  {name:'Ryan Fox',sal:7},{name:'Sergio Garcia',sal:7},
+  {name:'Daniel Berger',sal:7},{name:'Alex Noren',sal:7},
+  {name:'Dustin Johnson',sal:7},{name:'Keegan Bradley',sal:7},
+  {name:'Tom McKibbin',sal:7},{name:'Rasmus Hojgaard',sal:7},
+  {name:'Harry Hall',sal:6},{name:'Kurt Kitayama',sal:6},
+  {name:'Ryan Gerard',sal:6},{name:'Aaron Rai',sal:6},
+  {name:'Rasmus Neergaard-Petersen',sal:6},{name:'John Keefer',sal:6},
+  {name:'Nicolas Echavarria',sal:6},{name:'Michael Kim',sal:6},
+  {name:'Michael Brennan',sal:6},{name:'Casey Jarvis',sal:6},
+  {name:'Carlos Ortiz',sal:6},{name:'Max Greyserman',sal:5},
+  {name:'Sami Valimaki',sal:5},{name:'Brian Harman',sal:5},
+  {name:'Nick Taylor',sal:5},{name:'Tiger Woods',sal:5},
+  {name:'Matthew McCarty',sal:5},{name:'Andrew Novak',sal:5},
+  {name:'Sam Stevens',sal:5},{name:'Phil Mickelson',sal:5},
+  {name:'Davis Riley',sal:5},{name:'Kristoffer Reitan',sal:5},
+  {name:'Hao-Tong Li',sal:4},{name:'Charl Schwartzel',sal:4},
+  {name:'Bubba Watson',sal:4},{name:'Zach Johnson',sal:4},
+  {name:'Aldrich Potgieter',sal:4},{name:'Naoyuki Kataoka',sal:4},
+  {name:'Brian Campbell',sal:4},{name:'Danny Willett',sal:4},
+  {name:'Jackson Herrington',sal:4},{name:'Angel Cabrera',sal:4},
+  {name:'Ethan Fang',sal:4},{name:'Brandon Holtz',sal:4},
+  {name:'Fifa Laopakdee',sal:4},{name:'Vijay Singh',sal:3},
+  {name:'Mason Howell',sal:3},{name:'Fred Couples',sal:3},
+  {name:'Mike Weir',sal:3},{name:'Mateo Pulcini',sal:3},
+  {name:'Jose Maria Olazabal',sal:3}
+];
+
+const SAL_CAP = 50;
+let selectedPlayers = new Set();
+let lbData = [];
+let lbFilter = 'all';
+let lbSortCol = 'rank';
+let lbSortDir = 'asc';
+let submissionsLocked = true;
+
+// ─── LIVE DATA ────────────────────────────────────────────────
+let _liveTeams = [];
+let _liveMastersField = [];
+let _fieldFilter = 'all';
+let _fieldCutOfficial = false;
+let _liveLastFetch = 0;
+
+// ─── PASSWORD GATE ────────────────────────────────────────────
+function checkPassword() {
+  const val = document.getElementById('gate-input').value.trim().toLowerCase();
+  if (val === SITE_PASSWORD) {
+    localStorage.setItem('mpop_auth', 'true');
+    document.getElementById('password-gate').style.display = 'none';
+    init();
+  } else {
+    document.getElementById('gate-error').textContent = 'Incorrect password. Try again.';
+    document.getElementById('gate-input').value = '';
+  }
+}
+document.getElementById('gate-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPassword();
+});
+if (localStorage.getItem('mpop_auth') === 'true') {
+  document.getElementById('password-gate').style.display = 'none';
+  init();
+}
+
+function init() {
+  buildGolferGrid();
+  buildSalaryTable();
+  fetchAllLiveData();
+  setInterval(fetchAllLiveData, 60000);
+}
+
+// ─── LIVE DATA FETCH ──────────────────────────────────────────
+function fetchAllLiveData(force) {
+  const now = Date.now();
+  if (!force && _liveLastFetch && (now - _liveLastFetch) < 55000) return;
+  fetch(APPS_SCRIPT_URL + '?action=getAllData')
+    .then(r => r.json())
+    .then(data => {
+      if (data.leaderboard && data.leaderboard.teams) {
+        lbData = data.leaderboard.teams.map(t => ({
+          rank: t.rank,
+          teamName: t.teamName,
+          owner: t.ownerName,
+          score: t.totalPoints,
+          holesLeft: t.totalHolesRemaining,
+          players: t.players || []
+        }));
+      }
+      if (data.masters && data.masters.players) {
+        _liveMastersField = data.masters.players;
+        _fieldCutOfficial = data.masters.cutIsOfficial || false;
+      }
+      if (data.teams && data.teams.teams) {
+        _liveTeams = data.teams.teams;
+        buildPlayerFilter();
+      }
+      _liveLastFetch = Date.now();
+      const ts = new Date().toLocaleTimeString();
+      const lbEl = document.getElementById('lb-refresh-time');
+      if (lbEl) lbEl.textContent = 'Last updated: ' + ts;
+      const fEl = document.getElementById('field-refresh-time');
+      if (fEl) fEl.textContent = 'Last updated: ' + ts;
+      updateHomeStats({ totalTeams: lbData.length, prizePot: lbData.length * 20 });
+      // Re-render active page
+      const active = document.querySelector('.page.active');
+      if (active) {
+        if (active.id === 'page-leaderboard') renderLeaderboard();
+        if (active.id === 'page-lookup') lookupTeam();
+        if (active.id === 'page-field') renderField();
+      }
+    })
+    .catch(err => console.warn('Live data fetch failed:', err));
+}
+
+// ─── NAV ──────────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const link = document.querySelector(`.nav-links a[data-page="${id}"]`);
+  if (link) link.classList.add('active');
+  document.getElementById('nav-links').classList.remove('open');
+  window.scrollTo(0, 0);
+  if (id === 'leaderboard') renderLeaderboard();
+  if (id === 'lookup') lookupTeam();
+  if (id === 'field') renderField();
+}
+
+function toggleMenu() {
+  document.getElementById('nav-links').classList.toggle('open');
+}
+
+// ─── GOLFER GRID ──────────────────────────────────────────────
+function buildGolferGrid() {
+  const grid = document.getElementById('golfer-grid');
+  if (!grid) return;
+  grid.innerHTML = PLAYERS.map(p => {
+    const safeId = p.name.replace(/\s+/g, '_');
+    return `<div class="golfer-item" id="gi-${safeId}" data-name="${p.name}" data-sal="${p.sal}" onclick="togglePlayerEl(this)">
+      <div class="check"></div>
+      <div class="golfer-name">${p.name}</div>
+      <div class="golfer-sal">${p.sal}</div>
+    </div>`;
+  }).join('');
+}
+
+function togglePlayerEl(el) {
+  const name = el.getAttribute('data-name');
+  const sal = parseInt(el.getAttribute('data-sal'), 10);
+  if (submissionsLocked) { alert('Submissions are closed.'); return; }
+  const used = [...selectedPlayers].reduce((s, n) => s + (PLAYERS.find(p => p.name === n)?.sal || 0), 0);
+  if (selectedPlayers.has(name)) {
+    selectedPlayers.delete(name);
+    el.classList.remove('selected');
+  } else {
+    if (used + sal > SAL_CAP) { alert(`Adding ${name} ($${sal}) would exceed the $${SAL_CAP} salary cap!`); return; }
+    selectedPlayers.add(name);
+    el.classList.add('selected');
+  }
+  updateCapMeter();
+  updateSelectedList();
+}
+
+function updateCapMeter() {
+  const used = [...selectedPlayers].reduce((s, n) => s + (PLAYERS.find(p => p.name === n)?.sal || 0), 0);
+  const pct = Math.min((used / SAL_CAP) * 100, 100);
+  const capEl = document.getElementById('cap-display');
+  const barEl = document.getElementById('cap-bar');
+  if (capEl) { capEl.textContent = `${used} / ${SAL_CAP}`; capEl.classList.toggle('over', used > SAL_CAP); }
+  if (barEl) { barEl.style.width = pct + '%'; barEl.classList.toggle('over', used > SAL_CAP); }
+  const pc = document.getElementById('player-count');
+  if (pc) pc.textContent = selectedPlayers.size;
+}
+
+function updateSelectedList() {
+  const el = document.getElementById('selected-list');
+  if (!el) return;
+  if (selectedPlayers.size === 0) { el.innerHTML = '<span class="sel-empty">No players selected yet</span>'; return; }
+  el.innerHTML = [...selectedPlayers].map(n => {
+    const sal = PLAYERS.find(p => p.name === n)?.sal || 0;
+    const safeId = n.replace(/\s+/g, '_');
+    return `<div class="sel-tag">${n} <button onclick="document.getElementById('gi-${safeId}').click()">&#215;</button></div>`;
+  }).join('');
+}
+
+// ─── SUBMIT TEAM ─────────────────────────────────────────────
+function submitTeam() {
+  const name  = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const team  = document.getElementById('f-team').value.trim();
+  if (!name || !email || !team) { alert('Please fill in your name, email, and team name.'); return; }
+  if (selectedPlayers.size === 0) { alert('Please select at least one golfer.'); return; }
+  const used = [...selectedPlayers].reduce((s, n) => s + (PLAYERS.find(p => p.name === n)?.sal || 0), 0);
+  if (used > SAL_CAP) { alert(`Your team is over the salary cap (${used}/${SAL_CAP}).`); return; }
+  if (submissionsLocked) { alert('Submissions are closed.'); return; }
+  const players = [...selectedPlayers];
+  const payload = { name, email, teamName: team, salary: used };
+  players.forEach((p, i) => payload[`player${i + 1}`] = p);
+  const btn = document.querySelector('#page-enter .btn-gold');
+  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    document.getElementById('entry-form').style.display = 'none';
+    document.getElementById('success-card').classList.add('visible');
+  }).catch(() => {
+    document.getElementById('entry-form').style.display = 'none';
+    document.getElementById('success-card').classList.add('visible');
+  }).finally(() => {
+    if (btn) { btn.textContent = 'Submit Team →'; btn.disabled = false; }
+  });
+}
+
+function resetForm() {
+  selectedPlayers.clear();
+  document.querySelectorAll('.golfer-item').forEach(el => el.classList.remove('selected'));
+  ['f-name', 'f-email', 'f-team'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  updateCapMeter();
+  updateSelectedList();
+  const ef = document.getElementById('entry-form');
+  if (ef) ef.style.display = 'block';
+  const sc = document.getElementById('success-card');
+  if (sc) sc.classList.remove('visible');
+}
+
+// ─── SALARY TABLE ─────────────────────────────────────────────
+function buildSalaryTable() {
+  const tbody = document.getElementById('salary-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = PLAYERS.map(p =>
+    `<tr><td>${p.name}</td><td><span class="sal-badge">${p.sal}</span></td></tr>`
+  ).join('');
+}
+
+// ─── HOME STATS ───────────────────────────────────────────────
+function updateHomeStats(data) {
+  if (!data) return;
+  const teams = data.totalTeams || lbData.length || '—';
+  const pot = data.prizePot ? '$' + data.prizePot : '—';
+  const ht = document.getElementById('home-teams');
+  const hp = document.getElementById('home-pot');
+  const he = document.getElementById('home-entrants');
+  if (ht) ht.textContent = teams;
+  if (hp) hp.textContent = pot;
+  if (he) he.textContent = new Set(lbData.map(t => t.owner)).size || '—';
+}
+
+// ─── WORLD FAMOUS LEADERBOARD ─────────────────────────────────
+function setLbFilter(f, el) {
+  lbFilter = f;
+  document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderLeaderboard();
+}
+
+function toggleSort(col) {
+  if (lbSortCol === col) lbSortDir = lbSortDir === 'asc' ? 'desc' : 'asc';
+  else { lbSortCol = col; lbSortDir = col === 'score' ? 'desc' : 'asc'; }
+  document.querySelectorAll('thead th').forEach(th => { th.classList.remove('sorted-asc', 'sorted-desc'); });
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  const search = (document.getElementById('lb-search')?.value || '').toLowerCase();
+  const sortSel = document.getElementById('lb-sort')?.value || 'rank';
+  let teams = [...lbData];
+  if (search) teams = teams.filter(t =>
+    (t.teamName || '').toLowerCase().includes(search) ||
+    (t.owner || '').toLowerCase().includes(search)
+  );
+  teams.sort((a, b) => {
+    if (sortSel === 'score-desc') return (b.score || 0) - (a.score || 0);
+    if (sortSel === 'score-asc')  return (a.score || 0) - (b.score || 0);
+    if (sortSel === 'holes-asc')  return (a.holesLeft || 0) - (b.holesLeft || 0);
+    if (sortSel === 'name')  return (a.teamName || '').localeCompare(b.teamName || '');
+    if (sortSel === 'owner') return (a.owner || '').localeCompare(b.owner || '');
+    return (a.rank || 999) - (b.rank || 999);
+  });
+  const tbody = document.getElementById('lb-body');
+  if (!tbody) return;
+  if (!teams.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><p>No teams found.</p><span>Loading...</span></td></tr>';
+    return;
+  }
+  tbody.innerHTML = teams.map(t => {
+    const rankClass = t.rank <= 3 ? `rank-${t.rank}` : '';
+    const rowId = 'lbrow_' + (t.rank || 0);
+    const expandId = 'lbexp_' + (t.rank || 0);
+    const pts = t.score || 0;
+    const ptsDisplay = (pts >= 0 ? '+' : '') + pts;
+    const ptsColor = pts > 0 ? 'color:var(--green)' : pts < 0 ? 'color:#c0392b' : '';
+    let playerHtml = '';
+    (t.players || []).forEach(p => {
+      const pp = p.points || 0;
+      const ppClass = pp > 0 ? 'ep-pts-pos' : pp < 0 ? 'ep-pts-neg' : '';
+      const ppDisplay = (pp >= 0 ? '+' : '') + pp;
+      const cutBadge = p.status === 'CUT' ? ' <span class="field-cut-badge">CUT</span>' :
+                       p.status === 'WD'  ? ' <span class="field-wd-badge">WD</span>' : '';
+      playerHtml += `<div class="lb-expand-player">
+        <div><span class="ep-name">${p.name || ''}${cutBadge}</span>
+        <div class="ep-meta">${p.position || '-'} &middot; ${p.score || 'E'} &middot; Thru ${p.thru || '-'}</div></div>
+        <span class="${ppClass}">${ppDisplay}</span>
+      </div>`;
+    });
+    return `<tr class="lb-team-row ${rankClass}" id="${rowId}" onclick="toggleLbExpand('${expandId}','${rowId}')">
+      <td><strong>${t.rank || '—'}</strong></td>
+      <td><strong>${t.teamName || '—'}</strong></td>
+      <td>${t.owner || '—'}</td>
+      <td><strong style="${ptsColor}">${ptsDisplay}</strong></td>
+      <td>${t.holesLeft !== undefined ? t.holesLeft : '—'}</td>
+      <td><span class="expand-arrow">&#9660;</span></td>
+    </tr>
+    <tr class="lb-expand-row" id="${expandId}">
+      <td colspan="6"><div class="lb-expand-grid">${playerHtml}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleLbExpand(expandId, rowId) {
+  const exp = document.getElementById(expandId);
+  const row = document.getElementById(rowId);
+  if (!exp) return;
+  exp.classList.toggle('open');
+  if (row) row.classList.toggle('row-expanded');
+}
+
+// ─── TEAM LOOKUP ─────────────────────────────────────────────
+function buildPlayerFilter() {
+  const sel = document.getElementById('lookup-player-filter');
+  if (!sel) return;
+  const allNames = [];
+  _liveTeams.forEach(t => (t.players || []).forEach(p => {
+    if (p.name && !allNames.includes(p.name)) allNames.push(p.name);
+  }));
+  allNames.sort();
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— Filter by player —</option>' +
+    allNames.map(n => `<option value="${n}"${n === cur ? ' selected' : ''}>${n}</option>`).join('');
+}
+
+function lookupTeam() {
+  const q = (document.getElementById('lookup-input')?.value || '').toLowerCase().trim();
+  const playerFilter = (document.getElementById('lookup-player-filter')?.value || '').toLowerCase();
+  const results = document.getElementById('lookup-results');
+  const countEl = document.getElementById('lookup-count');
+  if (!results) return;
+  const source = _liveTeams.length ? _liveTeams : lbData;
+  if (!q && !playerFilter) {
+    results.innerHTML = '';
+    if (countEl) countEl.textContent = '';
+    return;
+  }
+  const matches = source.filter(t => {
+    const ownerName = (t.ownerName || t.owner || '').toLowerCase();
+    const teamName = (t.teamName || '').toLowerCase();
+    const matchQ = !q || teamName.includes(q) || ownerName.includes(q);
+    const matchP = !playerFilter || (t.players || []).some(p => (p.name || '').toLowerCase().includes(playerFilter));
+    return matchQ && matchP;
+  });
+  matches.sort((a, b) => ((b.totalPoints || b.score || 0) - (a.totalPoints || a.score || 0)));
+  if (countEl) countEl.textContent = matches.length + ' team' + (matches.length !== 1 ? 's' : '') + ' found';
+  if (!matches.length) {
+    results.innerHTML = '<div class="lookup-result" style="color:var(--muted);text-align:center;padding:2rem">No teams found matching your search.</div>';
+    return;
+  }
+  results.innerHTML = matches.map(t => {
+    const pts = t.totalPoints !== undefined ? t.totalPoints : (t.score || 0);
+    const ptsDisplay = (pts >= 0 ? '+' : '') + pts;
+    const holesLeft = t.totalHolesRemaining !== undefined ? t.totalHolesRemaining : (t.holesLeft || '—');
+    const golfers = (t.players || t.golfers || []).map(g => {
+      const pp = g.points !== undefined ? g.points : 0;
+      const ppDisplay = (pp >= 0 ? '+' : '') + pp;
+      const ppStyle = pp > 0 ? 'color:var(--green)' : pp < 0 ? 'color:#c0392b' : '';
+      const cutBadge = g.status === 'CUT' ? ' <span class="field-cut-badge">CUT</span>' :
+                       g.status === 'WD'  ? ' <span class="field-wd-badge">WD</span>' : '';
+      return `<div class="lookup-player">
+        <span>${g.name || g}${cutBadge}<br><span style="font-size:0.72rem;color:var(--muted)">${g.position || '-'} &middot; ${g.score || 'E'} &middot; Thru ${g.thru || '-'}</span></span>
+        <span class="pts" style="${ppStyle}">${ppDisplay} pts</span>
+      </div>`;
+    }).join('');
+    return `<div class="lookup-result">
+      <h4>${t.teamName || '—'} <span style="font-size:0.85rem;color:var(--muted);font-family:'Lato',sans-serif">&middot; ${t.ownerName || t.owner || ''}</span></h4>
+      <div style="margin-bottom:0.75rem">
+        <strong style="color:var(--green)">Total: ${ptsDisplay} pts</strong>
+        ${t.rank ? ` &middot; Rank: #${t.rank}` : ''}
+        &middot; Holes left: ${holesLeft}
+      </div>
+      <div class="lookup-players">${golfers || '<span style="color:var(--muted);font-size:0.85rem">Player data loading...</span>'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── MASTERS FIELD ────────────────────────────────────────────
+function setFieldFilter(f, el) {
+  _fieldFilter = f;
+  document.querySelectorAll('#page-field .lb-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderField();
+}
+
+function renderField() {
+  const tbody = document.getElementById('field-body');
+  if (!tbody) return;
+  if (!_liveMastersField.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><p>Loading field data...</p></td></tr>';
+    return;
+  }
+  const q = (document.getElementById('field-search')?.value || '').toLowerCase();
+  const sortBy = document.getElementById('field-sort')?.value || 'pos';
+  let players = _liveMastersField.filter(p => {
+    const mq = !q || (p.name || '').toLowerCase().includes(q);
+    const mf = _fieldFilter === 'all' ||
+      (_fieldFilter === 'active' && p.status === 'ACTIVE') ||
+      (_fieldFilter === 'cut' && (p.status === 'CUT' || p.status === 'WD' || p.status === 'DQ'));
+    return mq && mf;
+  });
+  if (sortBy === 'pts') players.sort((a, b) => (b.poolPoints || 0) - (a.poolPoints || 0));
+  else if (sortBy === 'owned') players.sort((a, b) => parseFloat(b.ownershipPct || 0) - parseFloat(a.ownershipPct || 0));
+  else players.sort((a, b) => {
+    const ao = a.status === 'ACTIVE' ? 0 : 1, bo = b.status === 'ACTIVE' ? 0 : 1;
+    if (ao !== bo) return ao - bo;
+    return (a.score || 0) - (b.score || 0);
+  });
+  const cutNotice = document.getElementById('field-cut-notice');
+  if (cutNotice) {
+    cutNotice.style.display = _fieldCutOfficial ? '' : 'none';
+    if (_fieldCutOfficial) cutNotice.textContent = '✂️ Cut is official';
+  }
+  if (!players.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><p>No players found.</p></td></tr>';
+    return;
+  }
+  tbody.innerHTML = players.map(p => {
+    const sc = p.score < 0 ? 'field-score-under' : p.score > 0 ? 'field-score-over' : 'field-score-even';
+    const pts = p.poolPoints || 0;
+    const ptsDisplay = (pts >= 0 ? '+' : '') + pts;
+    const ptsStyle = pts > 0 ? 'color:var(--green)' : pts < 0 ? 'color:#c0392b' : '';
+    const cutBadge = p.status === 'CUT' ? '<span class="field-cut-badge">CUT</span>' :
+                     p.status === 'WD'  ? '<span class="field-wd-badge">WD</span>' : '';
+    const owned = parseFloat(p.ownershipPct) || 0;
+    const barW = Math.min(60, owned * 1.5);
+    const totalTeams = lbData.length || '?';
+    const ownHtml = `<div class="owned-bar-wrap"><div class="owned-bar" style="width:${barW}px"></div><span class="owned-pct">${p.owned || 0}/${totalTeams} (${owned}%)</span></div>`;
+    return `<tr>
+      <td style="font-weight:700">${p.position || '—'}</td>
+      <td>${p.name || ''}</td>
+      <td class="${sc}">${p.scoreDisplay || 'E'}${cutBadge}</td>
+      <td>${p.thru || '—'}</td>
+      <td style="font-weight:700;${ptsStyle}">${ptsDisplay}</td>
+      <td>${ownHtml}</td>
+      <td>${p.holesRemaining !== undefined ? p.holesRemaining : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── ADMIN ────────────────────────────────────────────────────
+function checkAdminPin() {
+  const pin = document.getElementById('admin-pin').value;
+  if (pin === ADMIN_PIN) {
+    document.getElementById('admin-pin-gate').style.display = 'none';
+    document.getElementById('admin-inner').classList.add('visible');
+    loadAdminData();
+  } else {
+    document.getElementById('pin-error').style.display = 'block';
+    document.getElementById('admin-pin').value = '';
+  }
+}
+
+function loadAdminData() {
+  fetch(APPS_SCRIPT_URL + '?action=adminStats&pin=' + ADMIN_PIN)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('a-teams').textContent = data.totalTeams || 0;
+      document.getElementById('a-entrants').textContent = data.totalEntrants || 0;
+      document.getElementById('a-pot').textContent = '$' + (data.prizePot || 0);
+      document.getElementById('a-paid').textContent = data.paid || 0;
+      document.getElementById('a-unpaid').textContent = data.unpaid || 0;
+      buildPaymentTracker(data.entries || []);
+      buildPrizeCalc(data.totalTeams || 0);
+    }).catch(() => {});
+}
+
+function buildPaymentTracker(entries) {
+  const tbody = document.getElementById('payment-tbody');
+  if (!tbody) return;
+  if (!entries.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1rem">No entries yet</td></tr>'; return; }
+  const grouped = {};
+  entries.forEach(e => { if (!grouped[e.name]) grouped[e.name] = {teams: 0, paid: e.paid}; grouped[e.name].teams++; });
+  tbody.innerHTML = Object.entries(grouped).map(([name, d]) =>
+    `<tr><td>${name}</td><td>${d.teams}</td><td>$${d.teams * 20}</td>
+    <td><span style="color:${d.paid ? 'var(--green)' : '#c0392b'};font-weight:700">${d.paid ? '✓ Paid' : '⚠ Unpaid'}</span></td></tr>`
+  ).join('');
+}
+
+function buildPrizeCalc(numTeams) {
+  const pot = Math.max(0, numTeams * 20 - 40);
+  const positions = [[1,0.25],[2,0.15],[3,0.10],[4,0.07],[5,0.05]];
+  const tbody = document.getElementById('prize-tbody');
+  if (!tbody) return;
+  const rows = positions.filter(([,pct]) => pot * pct >= 5).map(([pos, pct]) =>
+    `<tr><td>${pos}${['st','nd','rd','th','th'][pos-1]}</td><td>$${Math.round(pot * pct)}</td></tr>`
+  );
+  tbody.innerHTML = rows.join('') || '<tr><td colspan="2" style="text-align:center;color:var(--muted)">Not enough entries yet</td></tr>';
+}
+
+function adminAction(action) {
+  if (action === 'lock') { submissionsLocked = true; alert('Submissions locked.'); }
+  else { submissionsLocked = false; alert('Submissions unlocked.'); }
+}
+</script><script>
 // ─── CONFIG ───────────────────────────────────────────────────
 const SITE_PASSWORD = 'augusta';
 const ADMIN_PIN = '2026';
@@ -1427,33 +2044,4 @@ function loadAdminData() {
 
 function buildPaymentTracker(entries) {
   const tbody = document.getElementById('payment-tbody');
-  if (!entries.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:1rem">No entries yet</td></tr>'; return; }
-  const grouped = {};
-  entries.forEach(e => { if (!grouped[e.name]) grouped[e.name] = {teams:0,paid:e.paid}; grouped[e.name].teams++; });
-  tbody.innerHTML = Object.entries(grouped).map(([name,d]) =>
-    `<tr>
-      <td>${name}</td>
-      <td>${d.teams}</td>
-      <td>$${d.teams*20}</td>
-      <td><span style="color:${d.paid?'var(--green)':'#c0392b'};font-weight:700">${d.paid?'✓ Paid':'⚠ Unpaid'}</span></td>
-    </tr>`
-  ).join('');
-}
-
-function buildPrizeCalc(numTeams) {
-  const pot = Math.max(0, numTeams * 20 - 40);
-  const positions = [[1, 0.25],[2, 0.15],[3, 0.10],[4, 0.07],[5, 0.05]];
-  const tbody = document.getElementById('prize-tbody');
-  const rows = positions.filter(([,pct]) => pot * pct >= 5).map(([pos,pct]) =>
-    `<tr><td>${pos}${['st','nd','rd','th','th'][pos-1]}</td><td>$${Math.round(pot*pct)}</td></tr>`
-  );
-  tbody.innerHTML = rows.join('') || '<tr><td colspan="2" style="text-align:center;color:var(--muted)">Not enough entries yet</td></tr>';
-}
-
-function adminAction(action) {
-  if (action === 'lock') { submissionsLocked = true; alert('Submissions locked.'); }
-  else { submissionsLocked = false; alert('Submissions unlocked.'); }
-}
-</script>
-</body>
-</html>
+  if (!entries.length) { tbody.innerHTML = '<tr><td colspan="4" st
