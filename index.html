@@ -699,7 +699,6 @@
       <img src="Poolofpoolslogo.webp" alt="Masters Pool of Pools" class="hero-logo">
       <div class="hero-tagline">The World Famous Live Leaderboard</div>
       <div class="hero-btns">
-        <a href="#" onclick="showPage('enter');return false;" class="btn btn-gold">Enter a Team — $20</a>
         <a href="#" onclick="showPage('leaderboard');return false;" class="btn btn-outline">View Leaderboard</a>
       </div>
     </div>
@@ -724,8 +723,10 @@
 
   <div class="info-stripe">
     <strong>2026 Masters · Augusta National</strong> &nbsp;·&nbsp;
-    Entry Fee: <strong>$20/team</strong> · Salary Cap: <strong>50</strong> · Deadline: <strong>Thursday tee-off</strong><br>
-    E-transfer: <strong><a href="/cdn-cgi/l/email-protection#c4a9a5b7b0a1b6b7b4ababa8aba2b4ababa8b784a3a9a5ada8eaa7aba9"><span class="__cf_email__" data-cfemail="c4a9a5b7b0a1b6b7b4ababa8aba2b4ababa8b784a3a9a5ada8eaa7aba9">[email&#160;protected]</span></a></strong> · Treasury Secretary: Daniel Simmonds
+    Entry Fee: <strong>$20/team</strong> &nbsp;·&nbsp;
+    Current Leader: <strong id="stripe-leader">Loading...</strong> &nbsp;·&nbsp;
+    <span id="stripe-leader-pts"></span>
+    &nbsp;·&nbsp; E-transfer: <strong><a href="mailto:masterspoolofpools@gmail.com">masterspoolofpools@gmail.com</a></strong> · Treasury Secretary: Daniel
   </div>
 
   <div class="section">
@@ -736,7 +737,6 @@
       <p>Submit as many teams as you like — $20 each, no limit. E-transfer your entry fee to <a href="/cdn-cgi/l/email-protection#8ce1edfff8e9fefffce3e3e0e3eafce3e3e0ffccebe1ede5e0a2efe3e1" style="color:var(--green);font-weight:700"><span class="__cf_email__" data-cfemail="7419150700110607041b1b181b12041b1b1807341319151d185a171b19">[email&#160;protected]</span></a> after submitting.</p>
     </div>
     <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap;">
-      <a href="#" onclick="showPage('enter');return false;" class="btn btn-green">Submit Your Team</a>
       <a href="#" onclick="showPage('rules');return false;" class="btn btn-outline" style="color:var(--green);border-color:var(--green);">Read the Rules</a>
     </div>
   </div>
@@ -1243,6 +1243,14 @@ function fetchAllLiveData(force) {
       const ts = new Date().toLocaleTimeString();
       const lbEl = document.getElementById('lb-refresh-time');
       if (lbEl) lbEl.textContent = 'Last updated: ' + ts;
+      // Update stripe leader
+      if (lbData.length > 0) {
+        const leader = lbData[0];
+        const sl = document.getElementById('stripe-leader');
+        const sp = document.getElementById('stripe-leader-pts');
+        if (sl) sl.textContent = leader.teamName || leader.owner || '—';
+        if (sp) sp.textContent = leader.score + ' pts';
+      }
       const fEl = document.getElementById('field-refresh-time');
       if (fEl) fEl.textContent = 'Last updated: ' + ts;
       updateHomeStats({ totalTeams: lbData.length, prizePot: lbData.length * 20 });
@@ -1434,13 +1442,13 @@ function renderLeaderboard() {
     const rowId = 'lbrow_' + (t.rank || 0);
     const expandId = 'lbexp_' + (t.rank || 0);
     const pts = t.score || 0;
-    const ptsDisplay = (pts >= 0 ? '+' : '') + pts;
+    const ptsDisplay = pts;
     const ptsColor = pts > 0 ? 'color:var(--green)' : pts < 0 ? 'color:#c0392b' : '';
     let playerHtml = '';
     (t.players || []).forEach(p => {
       const pp = p.points || 0;
       const ppClass = pp > 0 ? 'ep-pts-pos' : pp < 0 ? 'ep-pts-neg' : '';
-      const ppDisplay = (pp >= 0 ? '+' : '') + pp;
+      const ppDisplay = pp;
       const cutBadge = p.status === 'CUT' ? ' <span class="field-cut-badge">CUT</span>' :
                        p.status === 'WD'  ? ' <span class="field-wd-badge">WD</span>' : '';
       playerHtml += `<div class="lb-expand-player">
@@ -1512,11 +1520,11 @@ function lookupTeam() {
   }
   results.innerHTML = matches.map(t => {
     const pts = t.totalPoints !== undefined ? t.totalPoints : (t.score || 0);
-    const ptsDisplay = (pts >= 0 ? '+' : '') + pts;
+    const ptsDisplay = pts;
     const holesLeft = t.totalHolesRemaining !== undefined ? t.totalHolesRemaining : (t.holesLeft || '—');
     const golfers = (t.players || t.golfers || []).map(g => {
       const pp = g.points !== undefined ? g.points : 0;
-      const ppDisplay = (pp >= 0 ? '+' : '') + pp;
+      const ppDisplay = pp;
       const ppStyle = pp > 0 ? 'color:var(--green)' : pp < 0 ? 'color:#c0392b' : '';
       const cutBadge = g.status === 'CUT' ? ' <span class="field-cut-badge">CUT</span>' :
                        g.status === 'WD'  ? ' <span class="field-wd-badge">WD</span>' : '';
@@ -1580,7 +1588,7 @@ function renderField() {
   tbody.innerHTML = players.map(p => {
     const sc = p.score < 0 ? 'field-score-under' : p.score > 0 ? 'field-score-over' : 'field-score-even';
     const pts = p.poolPoints || 0;
-    const ptsDisplay = (pts >= 0 ? '+' : '') + pts;
+    const ptsDisplay = pts;
     const ptsStyle = pts > 0 ? 'color:var(--green)' : pts < 0 ? 'color:#c0392b' : '';
     const cutBadge = p.status === 'CUT' ? '<span class="field-cut-badge">CUT</span>' :
                      p.status === 'WD'  ? '<span class="field-wd-badge">WD</span>' : '';
