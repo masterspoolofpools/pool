@@ -635,6 +635,19 @@
   .expand-arrow { font-size: 0.65rem; color: var(--muted); transition: transform 0.2s; display: inline-block; }
   .lb-team-row.row-expanded .expand-arrow { transform: rotate(180deg); }
 
+
+  /* ─── PRIZE COLUMN ─── */
+  .prize-badge {
+    background: var(--gold); color: var(--dark);
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em;
+    padding: 2px 8px; border-radius: 2px; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .prize-dq { color: var(--muted); font-size: 0.75rem; font-style: italic; }
+  .prize-last { background: var(--green-mid); color: var(--cream); }
+  .lb-inmoneyrow { background: rgba(212,168,67,0.06); }
+  .lb-lastplacerow { background: rgba(26,74,46,0.04); }
+
   /* ─── MISC ─── */
   .divider { border: none; border-top: 2px solid var(--border); margin: 2rem 0; }
   .search-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
@@ -726,7 +739,7 @@
     Entry Fee: <strong>$20/team</strong> &nbsp;·&nbsp;
     Current Leader: <strong id="stripe-leader">Loading...</strong> &nbsp;·&nbsp;
     <span id="stripe-leader-pts"></span>
-    &nbsp;·&nbsp; E-transfer: <strong><a href="mailto:masterspoolofpools@gmail.com">masterspoolofpools@gmail.com</a></strong> · Treasury Secretary: Daniel
+    &nbsp;·&nbsp; E-transfer: <strong><a href="/cdn-cgi/l/email-protection#2e434f5d5a4b5c5d5e41414241485e4141425d6e49434f4742004d4143"><span class="__cf_email__" data-cfemail="a2cfc3d1d6c7d0d1d2cdcdcecdc4d2cdcdced1e2c5cfc3cbce8cc1cdcf">[email&#160;protected]</span></a></strong> · Treasury Secretary: Daniel
   </div>
 
   <div class="section">
@@ -765,6 +778,7 @@
         <option value="name">Sort by Team Name</option>
         <option value="owner">Sort by Owner</option>
         <option value="holes-asc">Sort by Holes Remaining</option>
+        <option value="prize-desc">Sort by Prize (High&#8594;Low)</option>
       </select>
     </div>
 
@@ -776,6 +790,7 @@
           <th onclick="toggleSort('owner')">Owner</th>
           <th onclick="toggleSort('score')">Score</th>
           <th onclick="toggleSort('holes')">Holes Left</th>
+          <th onclick="toggleSort('prize')">Prize</th>
           <th>Players &#9660;</th>
         </tr>
       </thead>
@@ -1115,7 +1130,7 @@ Ben</textarea>
   </p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ─── CONFIG ───────────────────────────────────────────────────
 const SITE_PASSWORD = 'augusta';
 const ADMIN_PIN = '2026';
@@ -1228,7 +1243,12 @@ function fetchAllLiveData(force) {
           owner: t.ownerName,
           score: t.totalPoints,
           holesLeft: t.totalHolesRemaining,
-          players: t.players || []
+          players: t.players || [],
+          prize: t.prize || 0,
+          prizeDisplay: t.prizeDisplay || '',
+          inMoney: t.inMoney || false,
+          isLastPlace: t.isLastPlace || false,
+          prizeRank: t.prizeRank || null
         }));
       }
       if (data.masters && data.masters.players) {
@@ -1434,7 +1454,7 @@ function renderLeaderboard() {
   const tbody = document.getElementById('lb-body');
   if (!tbody) return;
   if (!teams.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><p>No teams found.</p><span>Loading...</span></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><p>No teams found.</p><span>Loading...</span></td></tr>';
     return;
   }
   tbody.innerHTML = teams.map(t => {
@@ -1444,25 +1464,35 @@ function renderLeaderboard() {
     const pts = t.score || 0;
     const ptsDisplay = pts;
     const ptsColor = pts > 0 ? 'color:var(--green)' : pts < 0 ? 'color:#c0392b' : '';
+    let prizeHtml = '';
+    if (t.prizeDisplay === 'DQ') {
+      prizeHtml = '<span class="prize-dq">DQ</span>';
+    } else if (t.prizeDisplay && t.prizeDisplay !== '') {
+      const prizeClass = t.isLastPlace ? 'prize-badge prize-last' : 'prize-badge';
+      prizeHtml = `<span class="${prizeClass}">${t.prizeDisplay}</span>`;
+    }
+    const rowExtraClass = t.inMoney && !t.isLastPlace ? ' lb-inmoneyrow' : t.isLastPlace ? ' lb-lastplacerow' : '';
     let playerHtml = '';
     (t.players || []).forEach(p => {
       const pp = p.points || 0;
       const ppClass = pp > 0 ? 'ep-pts-pos' : pp < 0 ? 'ep-pts-neg' : '';
       const ppDisplay = pp;
       const cutBadge = p.status === 'CUT' ? ' <span class="field-cut-badge">CUT</span>' :
-                       p.status === 'WD'  ? ' <span class="field-wd-badge">WD</span>' : '';
+                       p.status === 'WD'  ? ' <span class="field-wd-badge">WD</span>' :
+                       p.status === 'PROJ_CUT' ? ' <span class="field-cut-badge" style="opacity:0.65">PROJ</span>' : '';
       playerHtml += `<div class="lb-expand-player">
         <div><span class="ep-name">${p.name || ''}${cutBadge}</span>
         <div class="ep-meta">${p.position || '-'} &middot; ${p.score || 'E'} &middot; Thru ${p.thru || '-'}</div></div>
         <span class="${ppClass}">${ppDisplay}</span>
       </div>`;
     });
-    return `<tr class="lb-team-row ${rankClass}" id="${rowId}" onclick="toggleLbExpand('${expandId}','${rowId}')">
+    return `<tr class="lb-team-row ${rankClass}${rowExtraClass}" id="${rowId}" onclick="toggleLbExpand('${expandId}','${rowId}')">
       <td><strong>${t.rank || '—'}</strong></td>
       <td><strong>${t.teamName || '—'}</strong></td>
       <td>${t.owner || '—'}</td>
       <td><strong style="${ptsColor}">${ptsDisplay}</strong></td>
       <td>${t.holesLeft !== undefined ? t.holesLeft : '—'}</td>
+      <td>${prizeHtml}</td>
       <td><span class="expand-arrow">&#9660;</span></td>
     </tr>
     <tr class="lb-expand-row" id="${expandId}">
@@ -2044,12 +2074,4 @@ function loadAdminData() {
       document.getElementById('a-pot').textContent = '$' + (data.prizePot || 0);
       document.getElementById('a-paid').textContent = data.paid || 0;
       document.getElementById('a-unpaid').textContent = data.unpaid || 0;
-      buildPaymentTracker(data.entries || []);
-      buildPrizeCalc(data.totalTeams || 0);
-    })
-    .catch(() => {});
-}
-
-function buildPaymentTracker(entries) {
-  const tbody = document.getElementById('payment-tbody');
-  if (!entries.length) { tbody.innerHTML = '<tr><td colspan="4" st
+      buildPaymentTracker(
